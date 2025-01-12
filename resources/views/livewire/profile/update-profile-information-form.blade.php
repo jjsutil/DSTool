@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
 
-new class extends Component
-{
-    public string $name = '';
+new class () extends Component {
+    public string $name  = '';
     public string $email = '';
 
     /**
@@ -16,7 +15,7 @@ new class extends Component
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
+        $this->name  = Auth::user()->name;
         $this->email = Auth::user()->email;
     }
 
@@ -28,7 +27,7 @@ new class extends Component
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name'  => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
         ]);
 

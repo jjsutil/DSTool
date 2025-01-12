@@ -5,8 +5,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
-{
+new #[Layout('layouts.guest')] class extends Component {
     public string $password = '';
 
     /**
@@ -19,7 +18,7 @@ new #[Layout('layouts.guest')] class extends Component
         ]);
 
         if (! Auth::guard('web')->validate([
-            'email' => Auth::user()->email,
+            'email'    => Auth::user()->email,
             'password' => $this->password,
         ])) {
             throw ValidationException::withMessages([
