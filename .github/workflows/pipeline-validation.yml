@@ -1,0 +1,96 @@
+name: DSTool CI/CD
+
+on: [push, release]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo, pdo_mysql, opcache, fileinfo, redis, bcmath, curl, json, xml, gd, zip, exif, pcntl
+          ini-values: post_max_size=256M, max_execution_time=180, memory_limit=4096M
+          coverage: xdebug
+          tools: composer, php-cs-fixer, phpunit
+
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install Composer dependencies
+        run: |
+          composer install \
+          --prefer-dist \
+          --no-scripts \
+          --no-progress
+
+      - name: If missing, copy .env
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Generate Laravel key
+        run: |
+          php artisan key:generate
+
+      - name: Set directory permissions
+        run: |
+          chmod -R 775 storage bootstrap/cache
+
+      - name: Run DB Migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          php artisan migrate \
+          --seed
+
+      - name: lint
+        run: composer check-php-cs-fix
+
+      - name: run phpstan
+        run: composer phpstan
+
+      - name: Run tests and generate JUnit XML for test results
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          php vendor/bin/phpunit \
+          --log-junit junit.xml \
+          --coverage-clover=coverage.xml
+
+      - name: Upload test results to Codecov for Analytics
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: junit.xml
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          name: Laravel Tests
+          fail_ci_if_error: true
