@@ -10,12 +10,11 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
-{
+new #[Layout('layouts.guest')] class extends Component {
     #[Locked]
-    public string $token = '';
-    public string $email = '';
-    public string $password = '';
+    public string $token                 = '';
+    public string $email                 = '';
+    public string $password              = '';
     public string $password_confirmation = '';
 
     /**
@@ -34,8 +33,8 @@ new #[Layout('layouts.guest')] class extends Component
     public function resetPassword(): void
     {
         $this->validate([
-            'token' => ['required'],
-            'email' => ['required', 'string', 'email'],
+            'token'    => ['required'],
+            'email'    => ['required', 'string', 'email'],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -46,7 +45,7 @@ new #[Layout('layouts.guest')] class extends Component
             $this->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) {
                 $user->forceFill([
-                    'password' => Hash::make($this->password),
+                    'password'       => Hash::make($this->password),
                     'remember_token' => Str::random(60),
                 ])->save();
 

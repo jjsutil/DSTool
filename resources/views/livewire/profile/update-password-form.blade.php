@@ -6,10 +6,9 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Livewire\Volt\Component;
 
-new class extends Component
-{
-    public string $current_password = '';
-    public string $password = '';
+new class () extends Component {
+    public string $current_password      = '';
+    public string $password              = '';
     public string $password_confirmation = '';
 
     /**
@@ -20,7 +19,7 @@ new class extends Component
         try {
             $validated = $this->validate([
                 'current_password' => ['required', 'string', 'current_password'],
-                'password' => ['required', 'string', Password::defaults(), 'confirmed'],
+                'password'         => ['required', 'string', Password::defaults(), 'confirmed'],
             ]);
         } catch (ValidationException $e) {
             $this->reset('current_password', 'password', 'password_confirmation');
