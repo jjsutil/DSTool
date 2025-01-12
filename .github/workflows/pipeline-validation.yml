@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: ${{ fromJson(secrets.MYSQL_ENV).MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ fromJson(secrets.MYSQL_ENV).MYSQL_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
         ports:
           - 3306:3306
         options: >-
@@ -20,7 +20,7 @@ jobs:
           --health-retries=3
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -30,6 +30,14 @@ jobs:
           ini-values: post_max_size=256M, max_execution_time=180, memory_limit=4096M
           coverage: xdebug
           tools: composer, php-cs-fixer, phpunit
+
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
       - name: Install Composer dependencies
         run: |
