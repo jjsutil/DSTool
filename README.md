@@ -114,6 +114,190 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 |                         | `shipping_cost`                  | `DECIMAL(10,2)`        |                          | Cost for shipping                         |
 |                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the shipping cost            |
 
+# E-Commerce Product Analytics Schema
+
+## products
+
+```markdown
+| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
+|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
+| id                 | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the product         |
+| name               | VARCHAR(255)        |                          | Yes          |                        |                              | Product name                              |
+| category           | VARCHAR(255)        |                          | Yes          | ['electronics', 'furniture', ...] |  | Product category                          |
+| description        | TEXT                |                          | No           |                        |                              | Detailed description of the product       |
+| provider_id        | INT                 |                          | Yes          |                        | belongsTo(Provider::class) | Foreign key to the provider               |
+| average_rating     | DECIMAL(3,2)        | 0.0                    | No           |                        |                              | Average customer rating                   |
+| rating_count       | INT                 | 0                      | No           |                        |                              | Total number of ratings                   |
+| is_active          | BOOLEAN             | TRUE                   | Yes          |                        |                              | Indicates if the product is active        |
+| created_at         | TIMESTAMP           | CURRENT_TIMESTAMP      | Yes          |                        |                              | Timestamp when the product was added      |
+
+### Relationships
+
+- **products → providers:** belongsTo(Provider::class)
+- **products → product_prices:** hasMany(ProductPrice::class)
+- **products → sales:** hasMany(Sale::class)
+
+### Model Configuration
+
+- **Fillables:** ['name', 'category', 'description', 'provider_id', 'is_active']
+- **Casts:** ['is_active' => 'boolean', 'average_rating' => 'float']
+- **Actions/Features:** Soft deletes, eager loading for provider, product_prices.
+
+### Queries
+
+- **Find active products:** 
+  
+```php
+Product::where('is_active', true)->get();
+
+
+## product_prices
+
+```markdown
+| **Column Name**   | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                   | **Comments**                              |
+|-------------------|-----------------------|--------------------------|--------------|------------------------|--------------------------------|-------------------------------------------|
+| id               | INT PRIMARY KEY     |                          | Yes          |                        |                                | Unique identifier for the price entry     |
+| product_id       | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product               |
+| price            | DECIMAL(10,2)       |                          | Yes          |                        |                                | Price of the product                      |
+| currency         | VARCHAR(10)         | 'USD'                   | Yes          | ['USD', 'EUR', 'JPY']  |                                | Currency of the price                     |
+| effective_date   | DATE                |                          | Yes          |                        |                                | Start date for the price entry            |
+
+### Relationships
+
+- **product_prices → products:** belongsTo(Product::class)
+
+### Model Configuration
+
+- **Fillables:** ['product_id', 'price', 'currency', 'effective_date']
+- **Casts:** ['price' => 'float', 'effective_date' => 'date']
+
+### Queries
+
+- **Get prices for a product:** 
+  
+```php
+ProductPrice::where('product_id', $productId)->get();
+
+
+## competitor_prices
+
+```markdown
+| **Column Name**   | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                   | **Comments**                              |
+|-------------------|-----------------------|--------------------------|--------------|------------------------|--------------------------------|-------------------------------------------|
+| id               | INT PRIMARY KEY     |                          | Yes          |                        |                                | Unique identifier for the price entry     |
+| competitor_id    | INT                 |                          | Yes          | belongsTo(Competitor::class) | Foreign key to the competitor             |
+| product_id       | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product               |
+| price            | DECIMAL(10,2)       |                          | Yes          |                        |                                | Price of the product                      |
+| currency         | VARCHAR(10)         | 'USD'                   | Yes          | ['USD', 'EUR', 'JPY']  |                                | Currency of the price                     |
+| recorded_at      | TIMESTAMP           | CURRENT_TIMESTAMP      | Yes          |                        |                                | Timestamp when the price was recorded     |
+
+### Relationships
+
+- **competitor_prices → competitors:** belongsTo(Competitor::class)
+- **competitor_prices → products:** belongsTo(Product::class)
+
+### Model Configuration
+
+- **Fillables:** ['competitor_id', 'product_id', 'price', 'currency']
+- **Casts:** ['price' => 'float', 'recorded_at' => 'datetime']
+
+### Queries
+
+- **Get competitor prices for a product:** 
+  
+```php
+CompetitorPrice::where('product_id', $productId)->get();
+
+
+## sales
+
+```markdown
+| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
+|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
+| id                 | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the sale            |
+| product_id         | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product               |
+| quantity           | INT                 |                          | Yes          |                        |                              | Quantity of products sold                 |
+| total_amount       | DECIMAL(10,2)       |                          | Yes          |                        |                              | Total amount of the sale                  |
+| sale_date          | DATE                |                          | Yes          |                        |                              | Date of the sale                          |
+
+### Relationships
+
+- **sales → products:** belongsTo(Product::class)
+
+### Model Configuration
+
+- **Fillables:** ['product_id', 'quantity', 'total_amount', 'sale_date']
+- **Casts:** ['total_amount' => 'float', 'sale_date' => 'date']
+
+### Queries
+
+- **Get sales for a product:** 
+  
+```php
+Sale::where('product_id', $productId)->get();
+
+| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
+|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
+| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the user            |
+| name                 | VARCHAR(255)        |                          | Yes          |                        |                              | Name of the user                          |
+| email                | VARCHAR(255)        |                          | Yes          |                        |                              | Email address                             |
+| password             | VARCHAR(255)        |                          | Yes          |                        |                              | Hashed password                           |
+| role                 | ENUM('admin', 'customer', 'vendor') | 'customer'  | Yes  |                        |                              | User role                                 |
+| created_at           | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | Timestamp when the user was created       |
+
+### Relationships
+- Users can be linked to orders, reviews, and shipping addresses.
+
+| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
+|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
+| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the order           |
+| user_id              | INT                 |                          | Yes          | belongsTo(User::class) | Foreign key to the user placing the order |
+| total_amount         | DECIMAL(10,2)       |                          | Yes          |                        |                              | Total amount of the order                 |
+| status               | ENUM('pending', 'completed', 'cancelled') | 'pending' | Yes | | | Current status of the order                 |
+| placed_at            | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | When the order was placed                 |
+
+### Relationships
+- **orders → users:** belongsTo(User::class)
+- **orders → order_items:** hasMany(OrderItem::class)
+
+| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
+|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
+| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the item entry      |
+| order_id             | INT                 |                          | Yes          | belongsTo(Order::class) | Foreign key to the order                |
+| product_id           | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product             |
+| quantity             | INT                 |                          | Yes          |                        |                              | Quantity of the product                   |
+| price_per_unit       | DECIMAL(10,2)       |                          | Yes          |                        |                              | Price per unit of the product             |
+
+### Relationships
+- **order_items → orders:** belongsTo(Order::class)
+- **order_items → products:** belongsTo(Product::class)
+
+| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
+|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
+| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the review          |
+| product_id           | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product             |
+| user_id              | INT                 |                          | Yes          | belongsTo(User::class) | Foreign key to the user                |
+| rating               | INT                 |                          | Yes          | [1, 2, 3, 4, 5]       |                              | Rating given by the user                  |
+| comment              | TEXT                |                          | No           |                        |                              | Review comment                            |
+| reviewed_at          | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | When the review was submitted             |
+
+### Relationships
+- **reviews → products:** belongsTo(Product::class)
+- **reviews → users:** belongsTo(User::class)
+
+| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
+|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
+| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the stock entry     |
+| product_id           | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product             |
+| warehouse_id         | INT                 |                          | Yes          | belongsTo(Warehouse::class) | Foreign key to the warehouse         |
+| quantity             | INT                 |                          | Yes          |                        |                              | Quantity available in stock               |
+| updated_at           | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | When the stock was last updated           |
+
+### Relationships
+- **stock → products:** belongsTo(Product::class)
+- **stock → warehouses:** belongsTo(Warehouse::class)
+
+
 
 ### Summary of KPIs
 
