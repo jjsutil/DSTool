@@ -67,4 +67,69 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 =======
 # DSTool
+
+### Schema for E-commerce Product Analytics
+
+| **Table Name**          | **Column Name**                  | **Data Type**         | **Default Value**        | **Comments**                              |
+|-------------------------|----------------------------------|-----------------------|--------------------------|-------------------------------------------|
+| `products`              | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the product         |
+|                         | `name`                           | `VARCHAR(255)`         |                          | Product name                              |
+|                         | `category`                       | `VARCHAR(255)`         |                          | Category of the product                   |
+|                         | `description`                    | `TEXT`                 |                          | Description of the product                |
+|                         | `provider_id`                    | `INT`                  |                          | ID of the product provider                |
+|                         | `created_at`                     | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | When the product was added to the system  |
+| `product_prices`        | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the product price   |
+|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
+|                         | `price`                          | `DECIMAL(10,2)`        |                          | Product price                             |
+|                         | `provider_price`                 | `DECIMAL(10,2)`        |                          | Provider's price                          |
+|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the price                    |
+| `competitor_prices`     | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for competitor prices   |
+|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
+|                         | `competitor_price`               | `DECIMAL(10,2)`        |                          | Competitor's price                        |
+|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the competitor's price       |
+| `sales`                 | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the sale            |
+|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
+|                         | `quantity_sold`                  | `INT`                  |                          | Quantity of the product sold              |
+|                         | `sale_price`                     | `DECIMAL(10,2)`        |                          | Sale price of the product                 |
+|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the sale                     |
+| `sales_per_period`      | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the sales period    |
+|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
+|                         | `total_sales`                    | `INT`                  |                          | Total number of sales in the period       |
+|                         | `total_quantity_sold`            | `INT`                  |                          | Total quantity of products sold in period |
+|                         | `period`                         | `VARCHAR(255)`         |                          | The period for sales aggregation (e.g., week, month) |
+| `reviews`               | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the review          |
+|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
+|                         | `rating`                         | `DECIMAL(3,2)`         |                          | Rating given by the customer              |
+|                         | `review_text`                    | `TEXT`                 |                          | Review text                               |
+| `competitors`           | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for competitors         |
+|                         | `name`                           | `VARCHAR(255)`         |                          | Competitor name                           |
+|                         | `rating`                         | `DECIMAL(3,2)`         |                          | Rating of the competitor                  |
+|                         | `reviews_count`                  | `INT`                  |                          | Number of reviews                         |
+| `stock`                 | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for stock               |
+|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
+|                         | `stock_quantity`                 | `INT`                  |                          | Quantity of stock available               |
+|                         | `restock_date`                   | `DATE`                 |                          | Date of next restock                      |
+| `shipping`              | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for shipping            |
+|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
+|                         | `shipping_cost`                  | `DECIMAL(10,2)`        |                          | Cost for shipping                         |
+|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the shipping cost            |
+
+
+### Summary of KPIs
+
+| **KPI Group**               | **KPI**                                             | **Table**                   | **Columns**                                  |
+|-----------------------------|-----------------------------------------------------|-----------------------------|----------------------------------------------|
+| **Demand Indicators**        | 1. Sales Volume, 2. Sales Growth, 3. Sales Frequency| `sales`, `sales_per_period`  | `quantity_sold`, `total_sales`, `period`     |
+| **Pricing and Profitability**| 4. Price Variability, 5. Profit Margin, 6. Price Difference, 7. Avg Profit per Sale | `product_prices`, `competitor_prices`, `sales` | `price`, `competitor_price`, `sale_price`    |
+| **Competition Analysis**     | 8. Competitor Price Comparison, 9. Market Share, 10. Competitor Rating | `competitor_prices`, `competitors`, `sales` | `competitor_price`, `quantity_sold`, `rating`|
+| **Quality and Appeal**      | 11. Product Rating, 12. Review Sentiment           | `reviews`                   | `rating`, `review_text`                      |
+| **Trend and Time**          | 13. Price Trend, 14. Sales Trend                   | `product_prices`, `sales`   | `price`, `quantity_sold`, `timestamp`        |
+| **Consumer Behavior**       | 15. Purchase Frequency, 16. Avg Quantity per Consumer | `sales`, `sales_per_period` | `quantity_sold`, `total_sales`               |
+| **Market Opportunity**      | 17. Stock Availability, 18. Restock Trends         | `stock`                     | `stock_quantity`, `restock_date`             |
+| **Historical Data**         | Historical Performance                             | `sales`, `product_prices`, `competitor_prices` | `timestamp`, `quantity_sold`, `price`        |
+| **Operational Factors**     | Stock and Shipping                                 | `stock`, `shipping`         | `stock_quantity`, `shipping_cost`            |
+| **Advanced Metrics**        | Complex Data Analysis                              | `sales`, `product_prices`, `competitor_prices` | `quantity_sold`, `price`, `competitor_price` |
+| **Data Aggregation**        | Consolidated Views                                 | `sales_per_period`          | `total_sales`, `total_quantity_sold`         |
+
+
 >>>>>>> 5aeadb3fd0331a2a333be06370cbb38caf1e12b6
