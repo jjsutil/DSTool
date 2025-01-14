@@ -118,18 +118,17 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ## products
 
-```markdown
 | **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
 |-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                 | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the product         |
-| name               | VARCHAR(255)        |                          | Yes          |                        |                              | Product name                              |
-| category           | VARCHAR(255)        |                          | Yes          | ['electronics', 'furniture', ...] |  | Product category                          |
-| description        | TEXT                |                          | No           |                        |                              | Detailed description of the product       |
-| provider_id        | INT                 |                          | Yes          |                        | belongsTo(Provider::class) | Foreign key to the provider               |
-| average_rating     | DECIMAL(3,2)        | 0.0                    | No           |                        |                              | Average customer rating                   |
-| rating_count       | INT                 | 0                      | No           |                        |                              | Total number of ratings                   |
-| is_active          | BOOLEAN             | TRUE                   | Yes          |                        |                              | Indicates if the product is active        |
-| created_at         | TIMESTAMP           | CURRENT_TIMESTAMP      | Yes          |                        |                              | Timestamp when the product was added      |
+| id                    | INT PRIMARY KEY       |                          | Yes          |                        |                              | Unique identifier for the product         |
+| name                  | VARCHAR(255)          |                          | Yes          |                        |                              | Product name                              |
+| category              | VARCHAR(255)          |                          | Yes          | ['electronics', 'furniture', ...] |  | Product category                          |
+| description           | TEXT                  |                          | No           |                        |                              | Detailed description of the product       |
+| provider_id           | INT                   |                          | Yes          |                        | belongsTo(Provider::class) | Foreign key to the provider               |
+| average_rating        | DECIMAL(3,2)          | 0.0                      | No           |                        |                              | Average customer rating                   |
+| rating_count          | INT                   | 0                        | No           |                        |                              | Total number of ratings                   |
+| is_active             | BOOLEAN               | TRUE                     | Yes          |                        |                              | Indicates if the product is active        |
+| created_at            | TIMESTAMP             | CURRENT_TIMESTAMP        | Yes          |                        |                              | Timestamp when the product was added      |
 
 ### Relationships
 
@@ -147,13 +146,12 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 - **Find active products:** 
   
-```php
+```
 Product::where('is_active', true)->get();
-
+```
 
 ## product_prices
 
-```markdown
 | **Column Name**   | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                   | **Comments**                              |
 |-------------------|-----------------------|--------------------------|--------------|------------------------|--------------------------------|-------------------------------------------|
 | id               | INT PRIMARY KEY     |                          | Yes          |                        |                                | Unique identifier for the price entry     |
@@ -177,11 +175,10 @@ Product::where('is_active', true)->get();
   
 ```php
 ProductPrice::where('product_id', $productId)->get();
-
+```
 
 ## competitor_prices
 
-```markdown
 | **Column Name**   | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                   | **Comments**                              |
 |-------------------|-----------------------|--------------------------|--------------|------------------------|--------------------------------|-------------------------------------------|
 | id               | INT PRIMARY KEY     |                          | Yes          |                        |                                | Unique identifier for the price entry     |
@@ -207,11 +204,10 @@ ProductPrice::where('product_id', $productId)->get();
   
 ```php
 CompetitorPrice::where('product_id', $productId)->get();
-
+```
 
 ## sales
 
-```markdown
 | **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
 |-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
 | id                 | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the sale            |
@@ -235,6 +231,7 @@ CompetitorPrice::where('product_id', $productId)->get();
   
 ```php
 Sale::where('product_id', $productId)->get();
+```
 
 | **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
 |-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
