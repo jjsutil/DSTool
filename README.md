@@ -1,4 +1,108 @@
-<<<<<<< HEAD
+# Project Outline
+
+## 1. Problem Definition
+| Question                | Answer                                                             |
+|-------------------------|--------------------------------------------------------------------|
+| **What problem are you solving?** | *Automatization to better use time for i) comparison, ii) selection, iii) quotation, iv) ordering, v) massive uploads filling, requerying / scrapping to consider historic changes and vi) sales meetrics to iterate*    |
+| **Who is it for?**                | *dropshippers*                                      |
+| **Why is it important?**          | *saves time*        |
+
+---
+
+## 2. Goal
+| Question                              | Answer                                       |
+|---------------------------------------|---------------------------------------------|
+| **What is the goal of the project?**  | *making more money in the same time, tracking import operations* |
+
+---
+
+## 3. Core Features
+| Feature                     | Description                                              |
+|-----------------------------|----------------------------------------------------------|
+| **[Feature Name]**          | *scraps, compares (google lens, using filters, strategies or targets), stores/discards (using our criteria)*   |
+| **[Feature Name]**          | *makes the best selection for stored productsbudget*   |
+| **[Feature Name]**          | *makes well shaped reports of the final quotation alternatives*   |
+| **[Feature Name]**          | *orders everything in alibaba or alieexpress for a selected quotation*   |
+| **[Feature Name]**          | *builds a massive upload taylored for mercadolibre, considering even photographs*   |
+| **[Feature Name]**          | *enhances in-built mercadolibre feats to track the performance of the "best" selection, so we can re-select (only) the good ones*   |
+
+---
+
+## 4. Sketch or UI Ideas
+| Question                    | Answer                                                                                     |
+|-----------------------------|-------------------------------------------------------------------------------------------|
+| **Do you have sketches or diagrams?** | *[Yes/No]*                                                                       |
+| **Tool Used**               | *[Mention the tool used for creating sketches, e.g., Figma, Draw.io, etc.]*                |
+| **Link to Designs**         | *[Provide a link to your sketches or UI mockups if applicable.]*                           |
+
+---
+
+## 5. Tech Stack
+| Component          | Technology/Tool                  |
+|---------------------|----------------------------------|
+| **Frontend**        | *[e.g., React, Vue.js, etc.]*   |
+| **Backend**         | *[e.g., Flask, Django, etc.]*   |
+| **Database**        | *[e.g., SQLite, PostgreSQL]*    |
+| **Hosting/Deployment** | *[e.g., Vercel, Heroku, AWS]*|
+
+---
+
+## 6. Architecture Plan
+| Question                                   | Answer                                                  |
+|-------------------------------------------|--------------------------------------------------------|
+| **How will components interact?**         | *[Describe the interaction flow, e.g., frontend -> backend -> database.]* |
+| **Diagram**                               | *[Include a link to an architecture diagram if applicable.]*               |
+
+---
+
+## 7. User Stories
+| User Story                                                                                     | Priority (High/Medium/Low) |
+|------------------------------------------------------------------------------------------------|----------------------------|
+| *"As a [user], I want to [do something] so that [goal]."*                                      | *[Priority Level]*         |
+| *"As a [user], I want to [do something else] so that [goal]."*                                 | *[Priority Level]*         |
+
+---
+
+## 8. Task Breakdown
+| Task Name                    | Description                                         | Status (Pending/In Progress/Done) |
+|------------------------------|-----------------------------------------------------|------------------------------------|
+| **Set up project structure** | *[Describe what needs to be done here.]*            | *[Status]*                        |
+| **Create database schema**   | *[Describe what needs to be done here.]*            | *[Status]*                        |
+| **Develop feature X**        | *[Describe what needs to be done here.]*            | *[Status]*                        |
+
+---
+
+## 9. Start Coding
+| Question                      | Answer                                                                                 |
+|-------------------------------|---------------------------------------------------------------------------------------|
+| **Where to begin?**           | *[Mention the priority areas to start coding, e.g., backend API, core feature, etc.]* |
+| **What tools to use?**        | *[Mention tools like Git, IDEs, linters, testing frameworks, etc.]*                  |
+
+---
+
+## 10. Iteration and Feedback
+| Question                                      | Answer                                                       |
+|----------------------------------------------|-------------------------------------------------------------|
+| **How will you get feedback?**               | *[Mention who will provide feedback, e.g., friends, mentors.]* |
+| **What will you do with the feedback?**      | *[Describe how you’ll refine and improve the project.]*      |
+
+---
+
+## Example Scenarios (Optional)
+| Scenario                   | Description                                              |
+|----------------------------|----------------------------------------------------------|
+| **Example Scenario Name**  | *[Explain a potential user interaction or use case.]*    |
+| **Example Scenario Name**  | *[Explain a potential user interaction or use case.]*    |
+
+---
+
+## Additional Notes
+| Question                      | Answer                                         |
+|-------------------------------|-----------------------------------------------|
+| **What challenges do you foresee?** | *[Describe any anticipated challenges.]* |
+| **How will you address these challenges?** | *[Mention potential solutions.]*      |
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -65,7 +169,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
+
 # DSTool
 
 ### Schema for E-commerce Product Analytics
