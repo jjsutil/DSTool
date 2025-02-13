@@ -8,7 +8,7 @@ models:
     created_at: timestamp
     updated_at: timestamp
     relationships:
-      hasMany: ProductConceptReview, Order
+      hasMany: ProductConceptReview
 
   ProductConcept:
     uuid: uuid primary
@@ -24,7 +24,7 @@ models:
     relationships:
       hasOne: ProductConceptStats
       hasMany: ScrapedProduct, ProductConceptStatsHistory, ProductConceptReview
-      belongsTo: User, Category
+      belongsTo: User
 
   ProductConceptReview:
     uuid: uuid primary
@@ -88,7 +88,7 @@ models:
     created_at: timestamp
     updated_at: timestamp
     relationships:
-      belongsTo: ProductConcept, Source, Provider, Category
+      belongsTo: ProductConcept, Source, Provider
       hasMany: Review
 
   Source:
