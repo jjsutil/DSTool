@@ -172,232 +172,120 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 # DSTool
 
-### Schema for E-commerce Product Analytics
+To analyze different versions of the same Product Concept, I need not only a ScrapedProduct but also a ProductConcept.
 
-| **Table Name**          | **Column Name**                  | **Data Type**         | **Default Value**        | **Comments**                              |
-|-------------------------|----------------------------------|-----------------------|--------------------------|-------------------------------------------|
-| `products`              | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the product         |
-|                         | `name`                           | `VARCHAR(255)`         |                          | Product name                              |
-|                         | `category`                       | `VARCHAR(255)`         |                          | Category of the product                   |
-|                         | `description`                    | `TEXT`                 |                          | Description of the product                |
-|                         | `provider_id`                    | `INT`                  |                          | ID of the product provider                |
-|                         | `created_at`                     | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | When the product was added to the system  |
-| `product_prices`        | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the product price   |
-|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
-|                         | `price`                          | `DECIMAL(10,2)`        |                          | Product price                             |
-|                         | `provider_price`                 | `DECIMAL(10,2)`        |                          | Provider's price                          |
-|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the price                    |
-| `competitor_prices`     | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for competitor prices   |
-|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
-|                         | `competitor_price`               | `DECIMAL(10,2)`        |                          | Competitor's price                        |
-|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the competitor's price       |
-| `sales`                 | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the sale            |
-|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
-|                         | `quantity_sold`                  | `INT`                  |                          | Quantity of the product sold              |
-|                         | `sale_price`                     | `DECIMAL(10,2)`        |                          | Sale price of the product                 |
-|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the sale                     |
-| `sales_per_period`      | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the sales period    |
-|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
-|                         | `total_sales`                    | `INT`                  |                          | Total number of sales in the period       |
-|                         | `total_quantity_sold`            | `INT`                  |                          | Total quantity of products sold in period |
-|                         | `period`                         | `VARCHAR(255)`         |                          | The period for sales aggregation (e.g., week, month) |
-| `reviews`               | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for the review          |
-|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
-|                         | `rating`                         | `DECIMAL(3,2)`         |                          | Rating given by the customer              |
-|                         | `review_text`                    | `TEXT`                 |                          | Review text                               |
-| `competitors`           | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for competitors         |
-|                         | `name`                           | `VARCHAR(255)`         |                          | Competitor name                           |
-|                         | `rating`                         | `DECIMAL(3,2)`         |                          | Rating of the competitor                  |
-|                         | `reviews_count`                  | `INT`                  |                          | Number of reviews                         |
-| `stock`                 | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for stock               |
-|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
-|                         | `stock_quantity`                 | `INT`                  |                          | Quantity of stock available               |
-|                         | `restock_date`                   | `DATE`                 |                          | Date of next restock                      |
-| `shipping`              | `id`                             | `INT PRIMARY KEY`     |                          | Unique identifier for shipping            |
-|                         | `product_id`                     | `INT`                  |                          | Foreign key to `products`                 |
-|                         | `shipping_cost`                  | `DECIMAL(10,2)`        |                          | Cost for shipping                         |
-|                         | `timestamp`                      | `TIMESTAMP`            | `CURRENT_TIMESTAMP`       | Timestamp of the shipping cost            |
+A ProductConcept represents a globally recognized product idea, and multiple ScrapedProducts can be associated with it, each coming from a different source (e.g., AliExpress, Alibaba, MercadoLibre). Matching between scraped products and product concepts is automated using Google Lens, ensuring consistency and avoiding duplicate concepts.
 
-# E-Commerce Product Analytics Schema
+Each ProductConcept is associated with historical statistics that are periodically updated based on new scraped data. Rather than accumulating all-time values, these stats are stored in fixed-time intervals (e.g., weekly) to allow trend analysis and better decision-making.
 
-## products
+Tables & Relationships:
 
-| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
-|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                    | INT PRIMARY KEY       |                          | Yes          |                        |                              | Unique identifier for the product         |
-| name                  | VARCHAR(255)          |                          | Yes          |                        |                              | Product name                              |
-| category              | VARCHAR(255)          |                          | Yes          | ['electronics', 'furniture', ...] |  | Product category                          |
-| description           | TEXT                  |                          | No           |                        |                              | Detailed description of the product       |
-| provider_id           | INT                   |                          | Yes          |                        | belongsTo(Provider::class) | Foreign key to the provider               |
-| average_rating        | DECIMAL(3,2)          | 0.0                      | No           |                        |                              | Average customer rating                   |
-| rating_count          | INT                   | 0                        | No           |                        |                              | Total number of ratings                   |
-| is_active             | BOOLEAN               | TRUE                     | Yes          |                        |                              | Indicates if the product is active        |
-| created_at            | TIMESTAMP             | CURRENT_TIMESTAMP        | Yes          |                        |                              | Timestamp when the product was added      |
 
-### Relationships
+markdown
+Copy
+Edit
+## Database Schema
 
-- **products → providers:** belongsTo(Provider::class)
-- **products → product_prices:** hasMany(ProductPrice::class)
-- **products → sales:** hasMany(Sale::class)
+### product_concepts
+| Column                  | Type         | Description |
+|-------------------------|-------------|-------------|
+| uuid                    | UUID        | Unique identifier |
+| name                    | STRING      | Concept name |
+| category                | STRING      | Product category |
+| description             | TEXT        | Description of the concept |
+| created_at              | TIMESTAMP   | Record creation timestamp |
+| updated_at              | TIMESTAMP   | Last update timestamp |
+| stats_id                | UUID        | Foreign key to stats |
+| concept_reviews_conclusion | TEXT    | AI-generated summary of reviews |
+| manual_review_flag      | BOOLEAN     | If true, requires human review before confirming match |
 
-### Model Configuration
+---
 
-- **Fillables:** ['name', 'category', 'description', 'provider_id', 'is_active']
-- **Casts:** ['is_active' => 'boolean', 'average_rating' => 'float']
-- **Actions/Features:** Soft deletes, eager loading for provider, product_prices.
+### stats
+| Column                  | Type         | Description |
+|-------------------------|-------------|-------------|
+| uuid                    | UUID        | Unique identifier |
+| product_concept_id      | UUID        | Foreign key to product_concepts |
+| average_sales          | FLOAT        | Average sales per period |
+| stdev_sales           | FLOAT        | Standard deviation of sales |
+| publications_number     | INT         | Number of active listings |
+| ali_to_meli_rate       | FLOAT        | Ratio of AliExpress to MercadoLibre sales |
+| growth_rate            | FLOAT        | Sales growth percentage over time |
+| price_trend           | FLOAT        | Change in average price over time |
 
-### Queries
+---
 
-- **Find active products:** 
-  
-```
-Product::where('is_active', true)->get();
-```
+### product_concept_stats_history
+| Column                  | Type         | Description |
+|-------------------------|-------------|-------------|
+| uuid                    | UUID        | Unique identifier |
+| product_concept_id      | UUID        | Foreign key to product_concepts |
+| timestamp               | TIMESTAMP   | When stats were recorded |
+| average_sales          | FLOAT        | Average sales at this point in time |
+| stdev_sales           | FLOAT        | Standard deviation of sales |
+| publications_number     | INT         | Number of active listings at this point in time |
+| ali_to_meli_rate       | FLOAT        | Historical AliExpress to MercadoLibre rate |
+| growth_rate            | FLOAT        | Historical growth percentage |
+| price_trend           | FLOAT        | Price trend at this point in time |
 
-## product_prices
+---
 
-| **Column Name**   | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                   | **Comments**                              |
-|-------------------|-----------------------|--------------------------|--------------|------------------------|--------------------------------|-------------------------------------------|
-| id               | INT PRIMARY KEY     |                          | Yes          |                        |                                | Unique identifier for the price entry     |
-| product_id       | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product               |
-| price            | DECIMAL(10,2)       |                          | Yes          |                        |                                | Price of the product                      |
-| currency         | VARCHAR(10)         | 'USD'                   | Yes          | ['USD', 'EUR', 'JPY']  |                                | Currency of the price                     |
-| effective_date   | DATE                |                          | Yes          |                        |                                | Start date for the price entry            |
+### scraped_products
+| Column                  | Type         | Description |
+|-------------------------|-------------|-------------|
+| uuid                    | UUID        | Unique identifier |
+| name                    | STRING      | Product name |
+| category                | STRING      | Product category |
+| sales_quantity         | INT         | Units sold |
+| price                  | FLOAT       | Price in USD |
+| currency               | STRING      | Always 'USD' |
+| source_id              | UUID        | Foreign key to sources |
+| created_at              | TIMESTAMP   | Record creation timestamp |
+| updated_at              | TIMESTAMP   | Last update timestamp |
+| product_concept_id      | UUID        | Foreign key to product_concepts |
+| provider_id            | UUID        | Foreign key to providers |
+| review_conclusion      | TEXT        | AI-generated summary of reviews |
+| stars                 | FLOAT       | Average star rating |
+| photo_path            | JSON        | List of product images |
+| reviews_count         | INT         | Number of reviews |
+| stock_quantity        | INT         | Units available in stock |
+| shipping_date         | DATE        | Estimated shipping date |
+| shipping_cost         | FLOAT       | Cost of shipping in USD |
+| shipping_currency     | STRING      | Always 'USD' |
+| matching_confidence_score | FLOAT  | Score from Google Lens for matching accuracy (0-100%) |
 
-### Relationships
+---
 
-- **product_prices → products:** belongsTo(Product::class)
+### sources
+| Column                  | Type         | Description |
+|-------------------------|-------------|-------------|
+| uuid                    | UUID        | Unique identifier |
+| source_origin          | STRING      | Marketplace (AliExpress, Alibaba, etc.) |
+| url                    | STRING      | Website URL |
 
-### Model Configuration
+---
 
-- **Fillables:** ['product_id', 'price', 'currency', 'effective_date']
-- **Casts:** ['price' => 'float', 'effective_date' => 'date']
+### providers
+| Column                  | Type         | Description |
+|-------------------------|-------------|-------------|
+| uuid                    | UUID        | Unique identifier |
+| name                    | STRING      | Provider name |
+| source_id               | UUID        | Foreign key to sources |
+| created_at              | TIMESTAMP   | Record creation timestamp |
+| updated_at              | TIMESTAMP   | Last update timestamp |
 
-### Queries
+---
 
-- **Get prices for a product:** 
-  
-```php
-ProductPrice::where('product_id', $productId)->get();
-```
-
-## competitor_prices
-
-| **Column Name**   | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                   | **Comments**                              |
-|-------------------|-----------------------|--------------------------|--------------|------------------------|--------------------------------|-------------------------------------------|
-| id               | INT PRIMARY KEY     |                          | Yes          |                        |                                | Unique identifier for the price entry     |
-| competitor_id    | INT                 |                          | Yes          | belongsTo(Competitor::class) | Foreign key to the competitor             |
-| product_id       | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product               |
-| price            | DECIMAL(10,2)       |                          | Yes          |                        |                                | Price of the product                      |
-| currency         | VARCHAR(10)         | 'USD'                   | Yes          | ['USD', 'EUR', 'JPY']  |                                | Currency of the price                     |
-| recorded_at      | TIMESTAMP           | CURRENT_TIMESTAMP      | Yes          |                        |                                | Timestamp when the price was recorded     |
-
-### Relationships
-
-- **competitor_prices → competitors:** belongsTo(Competitor::class)
-- **competitor_prices → products:** belongsTo(Product::class)
-
-### Model Configuration
-
-- **Fillables:** ['competitor_id', 'product_id', 'price', 'currency']
-- **Casts:** ['price' => 'float', 'recorded_at' => 'datetime']
-
-### Queries
-
-- **Get competitor prices for a product:** 
-  
-```php
-CompetitorPrice::where('product_id', $productId)->get();
-```
-
-## sales
-
-| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
-|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                 | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the sale            |
-| product_id         | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product               |
-| quantity           | INT                 |                          | Yes          |                        |                              | Quantity of products sold                 |
-| total_amount       | DECIMAL(10,2)       |                          | Yes          |                        |                              | Total amount of the sale                  |
-| sale_date          | DATE                |                          | Yes          |                        |                              | Date of the sale                          |
-
-### Relationships
-
-- **sales → products:** belongsTo(Product::class)
-
-### Model Configuration
-
-- **Fillables:** ['product_id', 'quantity', 'total_amount', 'sale_date']
-- **Casts:** ['total_amount' => 'float', 'sale_date' => 'date']
-
-### Queries
-
-- **Get sales for a product:** 
-  
-```php
-Sale::where('product_id', $productId)->get();
-```
-
-| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
-|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the user            |
-| name                 | VARCHAR(255)        |                          | Yes          |                        |                              | Name of the user                          |
-| email                | VARCHAR(255)        |                          | Yes          |                        |                              | Email address                             |
-| password             | VARCHAR(255)        |                          | Yes          |                        |                              | Hashed password                           |
-| role                 | ENUM('admin', 'customer', 'vendor') | 'customer'  | Yes  |                        |                              | User role                                 |
-| created_at           | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | Timestamp when the user was created       |
-
-### Relationships
-- Users can be linked to orders, reviews, and shipping addresses.
-
-| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
-|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the order           |
-| user_id              | INT                 |                          | Yes          | belongsTo(User::class) | Foreign key to the user placing the order |
-| total_amount         | DECIMAL(10,2)       |                          | Yes          |                        |                              | Total amount of the order                 |
-| status               | ENUM('pending', 'completed', 'cancelled') | 'pending' | Yes | | | Current status of the order                 |
-| placed_at            | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | When the order was placed                 |
-
-### Relationships
-- **orders → users:** belongsTo(User::class)
-- **orders → order_items:** hasMany(OrderItem::class)
-
-| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
-|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the item entry      |
-| order_id             | INT                 |                          | Yes          | belongsTo(Order::class) | Foreign key to the order                |
-| product_id           | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product             |
-| quantity             | INT                 |                          | Yes          |                        |                              | Quantity of the product                   |
-| price_per_unit       | DECIMAL(10,2)       |                          | Yes          |                        |                              | Price per unit of the product             |
-
-### Relationships
-- **order_items → orders:** belongsTo(Order::class)
-- **order_items → products:** belongsTo(Product::class)
-
-| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
-|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the review          |
-| product_id           | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product             |
-| user_id              | INT                 |                          | Yes          | belongsTo(User::class) | Foreign key to the user                |
-| rating               | INT                 |                          | Yes          | [1, 2, 3, 4, 5]       |                              | Rating given by the user                  |
-| comment              | TEXT                |                          | No           |                        |                              | Review comment                            |
-| reviewed_at          | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | When the review was submitted             |
-
-### Relationships
-- **reviews → products:** belongsTo(Product::class)
-- **reviews → users:** belongsTo(User::class)
-
-| **Column Name**       | **Data Type**         | **Default Value**        | **Required** | **Enum/Data Options** | **Relation**                 | **Comments**                              |
-|-----------------------|-----------------------|--------------------------|--------------|------------------------|------------------------------|-------------------------------------------|
-| id                   | INT PRIMARY KEY     |                          | Yes          |                        |                              | Unique identifier for the stock entry     |
-| product_id           | INT                 |                          | Yes          | belongsTo(Product::class) | Foreign key to the product             |
-| warehouse_id         | INT                 |                          | Yes          | belongsTo(Warehouse::class) | Foreign key to the warehouse         |
-| quantity             | INT                 |                          | Yes          |                        |                              | Quantity available in stock               |
-| updated_at           | TIMESTAMP           | CURRENT_TIMESTAMP        | Yes          |                        |                              | When the stock was last updated           |
-
-### Relationships
-- **stock → products:** belongsTo(Product::class)
-- **stock → warehouses:** belongsTo(Warehouse::class)
-
+### reviews
+| Column                  | Type         | Description |
+|-------------------------|-------------|-------------|
+| uuid                    | UUID        | Unique identifier |
+| reviewer_name          | STRING      | Name of the reviewer |
+| scraped_product_id      | UUID        | Foreign key to scraped_products |
+| content                | TEXT        | Review content |
+| photo_path             | JSON        | Array of review images |
+| stars                  | FLOAT       | Review star rating |
+| helpful_votes         | INT         | Number of people who found the review helpful |
 
 
 ### Summary of KPIs
@@ -416,29 +304,126 @@ Sale::where('product_id', $productId)->get();
 | **Advanced Metrics**        | Complex Data Analysis                              | `sales`, `product_prices`, `competitor_prices` | `quantity_sold`, `price`, `competitor_price` |
 | **Data Aggregation**        | Consolidated Views                                 | `sales_per_period`          | `total_sales`, `total_quantity_sold`         |
 
+### blueprint yaml
 
->>>>>>> 5aeadb3fd0331a2a333be06370cbb38caf1e12b6
+models:
+  ProductConcept:
+    uuid: uuid primary
+    name: string
+    category: string
+    description: text
+    created_at: timestamp
+    updated_at: timestamp
+    stats_id: uuid foreign:Stats
+    concept_reviews_conclusion: text
+    manual_review_flag: boolean default:false
+    relationships:
+      hasMany: ScrapedProduct, ProductConceptStatsHistory
 
-To analyze different versions of the same Product Concept I need not only a ScrapedProduct but also a ProductConcept. 
+  Stats:
+    uuid: uuid primary
+    product_concept_id: uuid foreign:ProductConcept
+    average_sales: float
+    stdev_sales: float
+    publications_number: integer
+    ali_to_meli_rate: float
+    growth_rate: float
+    price_trend: float
+    relationships:
+      belongsTo: ProductConcept
 
-A ProductConcept has many ScrapedProduct. Also ScrapedProducts are identified by one webapp source (e.g., aliexpress) 
+  ProductConceptStatsHistory:
+    uuid: uuid primary
+    product_concept_id: uuid foreign:ProductConcept
+    timestamp: timestamp
+    average_sales: float
+    stdev_sales: float
+    publications_number: integer
+    ali_to_meli_rate: float
+    growth_rate: float
+    price_trend: float
+    relationships:
+      belongsTo: ProductConcept
 
-product_concepts have: 
-uuid, name, category, description, created_at, updated_at, stats_id, concept_reviews_conclusion
+  ScrapedProduct:
+    uuid: uuid primary
+    name: string
+    category: string
+    sales_quantity: integer
+    price: float
+    currency: string default:'USD'
+    source_id: uuid foreign:Source
+    created_at: timestamp
+    updated_at: timestamp
+    product_concept_id: uuid foreign:ProductConcept
+    provider_id: uuid foreign:Provider
+    review_conclusion: text nullable
+    stars: float nullable
+    photo_path: json nullable
+    reviews_count: integer
+    stock_quantity: integer
+    shipping_date: date nullable
+    shipping_cost: float nullable
+    shipping_currency: string default:'USD'
+    matching_confidence_score: float nullable
+    relationships:
+      belongsTo: ProductConcept, Source, Provider
+      hasMany: Review
 
-stats:
-uuid, product_concept_id, average_sales, stdev_sales, publications_number, ali_to_meli_rate
+  Source:
+    uuid: uuid primary
+    source_origin: string
+    url: string
 
-scraped_products have: 
-uuid, name, category, sales_quantity, price, currency, source_id, created_at, updated_at, product_concept_id, provider_id, review_conclusion, stars, photo_path (jsonable), reviews_count, stock_quantity, shipping_date, shipping_cost, shipping_currency
+  Provider:
+    uuid: uuid primary
+    name: string
+    source_id: uuid foreign:Source
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      belongsTo: Source
 
-sources...
-uuid, source_origin, url, 
+  Review:
+    uuid: uuid primary
+    reviewer_name: string
+    scraped_product_id: uuid foreign:ScrapedProduct
+    content: text
+    photo_path: json nullable
+    stars: float
+    helpful_votes: integer nullable
+    relationships:
+      belongsTo: ScrapedProduct
 
-providers...
-uuid, name, source_id, created_at, updated_at
+### TODO 
 
-reviews
-uuid, reviewer_name, scraped_product_id, content, photo_path (jsonable), stars
+| **Question** | **Decision Needed** | **Current Status** | **Possible Actions** |
+|-------------|--------------------|--------------------|---------------------|
+| **How to handle duplicate ProductConcepts?** | Should we allow merging? | Not yet implemented | Add `merged_into_id` and `status` field in `ProductConcept`. |
+| **How to track price & sales changes over time?** | Do we need historical price/sales tracking? | Not yet implemented | Create `ScrapedProductHistory` table. |
+| **How to manage manual review of ProductConcepts?** | Should there be a queue system for review? | `manual_review_flag` exists but no tracking | Add `ProductConceptReviewQueue` table. |
+| **How to track products appearing on multiple sources?** | Can a ScrapedProduct exist in multiple sources? | `source_id` is a single foreign key | Convert to many-to-many with `ScrapedProductSource`. |
+| **Should we track overall sentiment from reviews?** | Do we need an AI-generated sentiment score? | Not yet implemented | Add `average_sentiment_score` to `ScrapedProduct`. |
+| **Who scraped the product?** | Do we need to store the scraper identity? | Not yet implemented | Add `scraped_by` field to `ScrapedProduct`. |
+| **How should we store images?** | Should images be separate records instead of JSON? | `photo_path` is a JSON field | Create `ScrapedProductImage` table. |
 
+### Are we covering?
+Here are the core features you originally outlined and a check to see if they are covered in the schema:
 
+markdown
+Copy
+Edit
+| **Feature** | **Description** | **Covered?** | **Notes** |
+|------------|---------------|-------------|-----------|
+| **Scraping & Comparing** | Scrapes data from Aliexpress, Alibaba, and Mercadolibre. Uses Google Lens and filtering strategies to compare. | ✅ | We have `scraped_products`, `sources`, `providers`, and `product_concepts`. Matching score added. |
+| **Storage & Discarding** | Stores or discards scraped products based on criteria. | ✅ | `review_conclusion` field allows filtering. A flag for "discarded" might be useful. |
+| **Best Selection for Budget** | Picks the best products for import based on budget constraints. | ⚠️ | No explicit budget-related table/columns. Should we add `cost_analysis` fields? |
+| **Quotation & Reporting** | Generates reports for product selections. | ⚠️ | No explicit reporting system in DB yet. Could be managed in app logic. |
+| **Automated Ordering** | Orders selected products from Aliexpress/Alibaba. | ❌ | No direct handling of ordering process. Could be an external integration. |
+| **Massive Upload to Mercadolibre** | Creates MercadoLibre listings with images, descriptions, and prices. | ✅ | `ScrapedProduct` structure supports it. Consider a `MercadoLibreListing` table for structured uploads. |
+| **Tracking Performance of Selected Products** | Monitors performance to refine future selections. | ✅ | `stats` table tracks sales and trends. Historical stats are planned. |
+Possible Additions
+Budget constraints: Should we add a budget table or max_budget field to ProductConcept?
+Reporting system: Should reports be stored in a separate reports table?
+Order tracking: Do you want to track orders in the DB or rely on external integrations?
+Mercadolibre automation: If we manage massive uploads, should we track listing statuses (published, pending, failed)?
