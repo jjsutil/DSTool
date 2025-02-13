@@ -418,3 +418,27 @@ Sale::where('product_id', $productId)->get();
 
 
 >>>>>>> 5aeadb3fd0331a2a333be06370cbb38caf1e12b6
+
+To analyze different versions of the same Product Concept I need not only a ScrapedProduct but also a ProductConcept. 
+
+A ProductConcept has many ScrapedProduct. Also ScrapedProducts are identified by one webapp source (e.g., aliexpress) 
+
+product_concepts have: 
+uuid, name, category, description, created_at, updated_at, stats_id, concept_reviews_conclusion
+
+stats:
+uuid, product_concept_id, average_sales, stdev_sales, publications_number, ali_to_meli_rate
+
+scraped_products have: 
+uuid, name, category, sales_quantity, price, currency, source_id, created_at, updated_at, product_concept_id, provider_id, review_conclusion, stars, photo_path (jsonable), reviews_count, stock_quantity, shipping_date, shipping_cost, shipping_currency
+
+sources...
+uuid, source_origin, url, 
+
+providers...
+uuid, name, source_id, created_at, updated_at
+
+reviews
+uuid, reviewer_name, scraped_product_id, content, photo_path (jsonable), stars
+
+
