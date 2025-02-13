@@ -1,0 +1,185 @@
+models:
+  User:
+    uuid: uuid primary
+    name: string
+    email: string unique
+    password: string
+    role: enum:admin,user default:user
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      hasMany: ProductConceptReview
+
+  ProductConcept:
+    uuid: uuid primary
+    product_concept_stats_id: uuid foreign:ProductConceptStats
+    user_id: uuid foreign:User
+    category_id: uuid foreign:Category
+    name: string
+    description: text
+    concept_reviews_conclusion: text
+    manual_review_flag: boolean default:false
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      hasOne: ProductConceptStats
+      hasMany: ScrapedProduct, ProductConceptStatsHistory, ProductConceptReview
+      belongsTo: User
+
+  ProductConceptReview:
+    uuid: uuid primary
+    user_id: uuid foreign:User
+    product_concept_id: uuid foreign:ProductConcept
+    rating: integer default:0
+    comment: text nullable
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      belongsTo: ProductConcept, User
+
+  ProductConceptStats:
+    uuid: uuid primary
+    product_concept_id: uuid foreign:ProductConcept
+    average_sales: float default:0
+    stdev_sales: float default:0
+    publications_number: integer default:0
+    ali_to_meli_rate: float default:0
+    growth_rate: float default:0
+    price_trend: float default:0
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      belongsTo: ProductConcept
+
+  ProductConceptStatsHistory:
+    uuid: uuid primary
+    product_concept_id: uuid foreign:ProductConcept
+    timestamp: timestamp
+    average_sales: float default:0
+    stdev_sales: float default:0
+    publications_number: integer default:0
+    ali_to_meli_rate: float default:0
+    growth_rate: float default:0
+    price_trend: float default:0
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      belongsTo: ProductConcept
+
+  ScrapedProduct:
+    uuid: uuid primary
+    source_id: uuid foreign:Source
+    product_concept_id: uuid foreign:ProductConcept
+    provider_id: uuid foreign:Provider
+    name: string
+    category_id: uuid foreign:Category
+    sales_quantity: integer default:0
+    price: float default:0
+    currency: string default:'USD'
+    review_conclusion: text nullable
+    stars: float nullable default:0
+    photo_path: json nullable
+    reviews_count: integer default:0
+    stock_quantity: integer default:0
+    shipping_date: date nullable
+    shipping_cost: float nullable default:0
+    shipping_currency: string default:'USD'
+    matching_confidence_score: float nullable default:0
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      belongsTo: ProductConcept, Source, Provider
+      hasMany: Review
+
+  Source:
+    uuid: uuid primary
+    source_origin: enum:Amazon,AliExpress,eBay,Other
+    url: string
+    relationships:
+      hasMany: Provider, ScrapedProduct
+
+  Provider:
+    uuid: uuid primary
+    source_id: uuid foreign:Source
+    name: string
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      belongsTo: Source
+      hasMany: ScrapedProduct
+
+  Review:
+    uuid: uuid primary
+    scraped_product_id: uuid foreign:ScrapedProduct
+    user_id: uuid foreign:User nullable
+    reviewer_name: string
+    content: text
+    photo_path: json nullable
+    stars: float default:0
+    helpful_votes: integer nullable default:0
+    created_at: timestamp
+    updated_at: timestamp
+    relationships:
+      belongsTo: ScrapedProduct, User
+
+  seeders:
+    UserSeeder
+    CategorySeeder
+    ProductConceptSeeder
+    ScrapedProductSeeder
+    ReviewSeeder
+
+  factories:
+    UserFactory
+    ProductConceptFactory
+    ProductConceptStatsFactory
+    ProductConceptStatsHistoryFactory
+    ScrapedProductFactory
+    SourceFactory
+    ProviderFactory
+    ReviewFactory
+
+  controllers:
+    UserController
+    ProductConceptController
+    ScrapedProductController
+    ReviewController
+
+  resources:
+    UserResource
+    ProductConceptResource
+    ScrapedProductResource
+    ReviewResource
+
+  policies:
+    UserPolicy
+    ProductConceptPolicy
+    ScrapedProductPolicy
+    ReviewPolicy
+
+  requests:
+    UserRequest
+    ProductConceptRequest
+    ScrapedProductRequest
+    ReviewRequest
+
+  routes:
+    api:
+      method: GET
+      uri: /users
+      controller: UserController@index
+      method: POST
+      uri: /users
+      controller: UserController@store
+      method: GET
+      uri: /products
+      controller: ProductConceptController@index
+      method: POST
+      uri: /products
+      controller: ProductConceptController@store
+      method: GET
+      uri: /scraped-products
+      controller: ScrapedProductController@index
+      method: POST
+      uri: /scraped-products
+      controller: ScrapedProductController@store
