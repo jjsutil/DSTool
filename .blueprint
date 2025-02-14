@@ -1,0 +1,43 @@
+created:
+    - database/factories/UserFactory.php
+    - database/factories/ProductConceptFactory.php
+    - database/factories/ProductConceptReviewFactory.php
+    - database/factories/ProductConceptStatsFactory.php
+    - database/factories/ProductConceptStatsHistoryFactory.php
+    - database/factories/ScrapedProductFactory.php
+    - database/factories/SourceFactory.php
+    - database/factories/ProviderFactory.php
+    - database/factories/ReviewFactory.php
+    - database/migrations/2025_02_13_230203_create_users_table.php
+    - database/migrations/2025_02_13_230204_create_product_concepts_table.php
+    - database/migrations/2025_02_13_230205_create_product_concept_reviews_table.php
+    - database/migrations/2025_02_13_230206_create_product_concept_stats_table.php
+    - database/migrations/2025_02_13_230207_create_product_concept_stats_histories_table.php
+    - database/migrations/2025_02_13_230208_create_scraped_products_table.php
+    - database/migrations/2025_02_13_230209_create_sources_table.php
+    - database/migrations/2025_02_13_230210_create_providers_table.php
+    - database/migrations/2025_02_13_230211_create_reviews_table.php
+    - app/Models/User.php
+    - app/Models/ProductConcept.php
+    - app/Models/ProductConceptReview.php
+    - app/Models/ProductConceptStats.php
+    - app/Models/ProductConceptStatsHistory.php
+    - app/Models/ScrapedProduct.php
+    - app/Models/Source.php
+    - app/Models/Provider.php
+    - app/Models/Review.php
+    - database/seeders/UserSeeder.php
+    - database/seeders/CategorySeeder.php
+    - database/seeders/ProductConceptSeeder.php
+    - database/seeders/ScrapedProductSeeder.php
+    - database/seeders/ReviewSeeder.php
+models:
+    User: { uuid: 'uuid primary', name: string, email: 'string unique', password: string, role: "enum('admin', 'user') default:'user'", timestamps: timestamps }
+    ProductConcept: { uuid: 'uuid primary', product_concept_stats_id: 'uuid foreign:ProductConceptStats', user_id: 'uuid foreign:User', category_id: 'uuid foreign:Category', name: string, description: text, concept_reviews_conclusion: text, manual_review_flag: 'boolean default:false', timestamps: timestamps }
+    ProductConceptReview: { uuid: 'uuid primary', user_id: 'uuid foreign:User', product_concept_id: 'uuid foreign:ProductConcept', rating: 'integer default:0', comment: 'text nullable', timestamps: timestamps }
+    ProductConceptStats: { uuid: 'uuid primary', product_concept_id: 'uuid foreign:ProductConcept', average_sales: 'float default:0', stdev_sales: 'float default:0', publications_number: 'integer default:0', ali_to_meli_rate: 'float default:0', growth_rate: 'float default:0', price_trend: 'float default:0', timestamps: timestamps }
+    ProductConceptStatsHistory: { uuid: 'uuid primary', product_concept_id: 'uuid foreign:ProductConcept', timestamp: timestamp, average_sales: 'float default:0', stdev_sales: 'float default:0', publications_number: 'integer default:0', ali_to_meli_rate: 'float default:0', growth_rate: 'float default:0', price_trend: 'float default:0', timestamps: timestamps }
+    ScrapedProduct: { uuid: 'uuid primary', source_id: 'uuid foreign:Source', product_concept_id: 'uuid foreign:ProductConcept', provider_id: 'uuid foreign:Provider', name: string, category_id: 'uuid foreign:Category', sales_quantity: 'integer default:0', price: 'float default:0', currency: "string default:'USD'", review_conclusion: 'text nullable', stars: 'float nullable default:0', photo_path: 'json nullable', reviews_count: 'integer default:0', stock_quantity: 'integer default:0', shipping_date: 'date nullable', shipping_cost: 'float nullable default:0', shipping_currency: "string default:'USD'", matching_confidence_score: 'float nullable default:0', timestamps: timestamps }
+    Source: { uuid: 'uuid primary', source_origin: "enum('Amazon', 'AliExpress', 'eBay', 'Other')", url: string }
+    Provider: { uuid: 'uuid primary', source_id: 'uuid foreign:Source', name: string, timestamps: timestamps }
+    Review: { uuid: 'uuid primary', scraped_product_id: 'uuid foreign:ScrapedProduct', user_id: 'uuid foreign:User nullable', reviewer_name: string, content: text, photo_path: 'json nullable', stars: 'float default:0', helpful_votes: 'integer nullable default:0', timestamps: timestamps }

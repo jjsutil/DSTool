@@ -5,20 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class Source extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'uuid',
-        'name',
-        'email',
-        'password',
-        'role',
-    ];
-
-    protected $hidden = [
-        'password',
+        'source_origin',
+        'url',
     ];
 
     protected $casts = [
