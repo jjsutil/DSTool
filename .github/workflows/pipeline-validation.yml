@@ -7,8 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:8.0
+        image: mariadb:10.5
         env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
           MYSQL_ROOT_PASSWORD: ""
           MYSQL_DATABASE: dstool
           MYSQL_USER: root_user
@@ -63,7 +64,7 @@ jobs:
       - name: Run DB Migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DB_CONNECTION: mysql
+          DB_CONNECTION: mariadb
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: dstool
