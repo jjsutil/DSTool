@@ -4,27 +4,18 @@ models:
     name: string
     email: string unique
     password: string
-    role: enum:admin,user default:user
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      hasMany: ProductConceptReview
+    role: enum('admin', 'user') default:'user'
+    timestamps
 
   ProductConcept:
     uuid: uuid primary
     product_concept_stats_id: uuid foreign:ProductConceptStats
     user_id: uuid foreign:User
-    category_id: uuid foreign:Category
     name: string
     description: text
     concept_reviews_conclusion: text
     manual_review_flag: boolean default:false
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      hasOne: ProductConceptStats
-      hasMany: ScrapedProduct, ProductConceptStatsHistory, ProductConceptReview
-      belongsTo: User
+    timestamps
 
   ProductConceptReview:
     uuid: uuid primary
@@ -32,10 +23,7 @@ models:
     product_concept_id: uuid foreign:ProductConcept
     rating: integer default:0
     comment: text nullable
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      belongsTo: ProductConcept, User
+    timestamps
 
   ProductConceptStats:
     uuid: uuid primary
@@ -46,10 +34,7 @@ models:
     ali_to_meli_rate: float default:0
     growth_rate: float default:0
     price_trend: float default:0
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      belongsTo: ProductConcept
+    timestamps
 
   ProductConceptStatsHistory:
     uuid: uuid primary
@@ -61,10 +46,7 @@ models:
     ali_to_meli_rate: float default:0
     growth_rate: float default:0
     price_trend: float default:0
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      belongsTo: ProductConcept
+    timestamps
 
   ScrapedProduct:
     uuid: uuid primary
@@ -85,28 +67,18 @@ models:
     shipping_cost: float nullable default:0
     shipping_currency: string default:'USD'
     matching_confidence_score: float nullable default:0
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      belongsTo: ProductConcept, Source, Provider
-      hasMany: Review
+    timestamps
 
   Source:
     uuid: uuid primary
-    source_origin: enum:Amazon,AliExpress,eBay,Other
+    source_origin: enum('Amazon', 'AliExpress', 'eBay', 'Other')
     url: string
-    relationships:
-      hasMany: Provider, ScrapedProduct
 
   Provider:
     uuid: uuid primary
     source_id: uuid foreign:Source
     name: string
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      belongsTo: Source
-      hasMany: ScrapedProduct
+    timestamps
 
   Review:
     uuid: uuid primary
@@ -117,69 +89,34 @@ models:
     photo_path: json nullable
     stars: float default:0
     helpful_votes: integer nullable default:0
-    created_at: timestamp
-    updated_at: timestamp
-    relationships:
-      belongsTo: ScrapedProduct, User
+    timestamps
 
-  seeders:
-    UserSeeder
-    CategorySeeder
-    ProductConceptSeeder
-    ScrapedProductSeeder
-    ReviewSeeder
+relationships:
+  User:
+    hasMany: ProductConceptReview
+  ProductConcept:
+    hasOne: ProductConceptStats
+    hasMany: ScrapedProduct, ProductConceptStatsHistory, ProductConceptReview
+    belongsTo: User
+  ProductConceptReview:
+    belongsTo: ProductConcept, User
+  ProductConceptStats:
+    belongsTo: ProductConcept
+  ProductConceptStatsHistory:
+    belongsTo: ProductConcept
+  ScrapedProduct:
+    belongsTo: ProductConcept, Source, Provider
+    hasMany: Review
+  Source:
+    hasMany: Provider, ScrapedProduct
+  Provider:
+    belongsTo: Source
+    hasMany: ScrapedProduct
+  Review:
+    belongsTo: ScrapedProduct, User
 
-  factories:
-    UserFactory
-    ProductConceptFactory
-    ProductConceptStatsFactory
-    ProductConceptStatsHistoryFactory
-    ScrapedProductFactory
-    SourceFactory
-    ProviderFactory
-    ReviewFactory
-
-  controllers:
-    UserController
-    ProductConceptController
-    ScrapedProductController
-    ReviewController
-
-  resources:
-    UserResource
-    ProductConceptResource
-    ScrapedProductResource
-    ReviewResource
-
-  policies:
-    UserPolicy
-    ProductConceptPolicy
-    ScrapedProductPolicy
-    ReviewPolicy
-
-  requests:
-    UserRequest
-    ProductConceptRequest
-    ScrapedProductRequest
-    ReviewRequest
-
-  routes:
-    api:
-      method: GET
-      uri: /users
-      controller: UserController@index
-      method: POST
-      uri: /users
-      controller: UserController@store
-      method: GET
-      uri: /products
-      controller: ProductConceptController@index
-      method: POST
-      uri: /products
-      controller: ProductConceptController@store
-      method: GET
-      uri: /scraped-products
-      controller: ScrapedProductController@index
-      method: POST
-      uri: /scraped-products
-      controller: ScrapedProductController@store
+seeders: User, ProductConcept, ScrapedProduct, Review
+factories: User, ProductConcept, ProductConceptStats, ProductConceptStatsHistory, ScrapedProduct, Source, Provider, Review
+resources: User, ProductConcept, ScrapedProduct, Review
+policies: User, ProductConcept, ScrapedProduct, Review
+requests: User, ProductConcept, ScrapedProduct, Review
