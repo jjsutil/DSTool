@@ -9,10 +9,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          MYSQL_USER: ${{ secrets.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_DATABASE: dstool
+          MYSQL_USER: root_user
+          MYSQL_PASSWORD: ""
         ports:
           - 3306:3306
         options: >-
@@ -66,9 +66,9 @@ jobs:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
-          DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          DB_USERNAME: ${{ secrets.MYSQL_USER }}
-          DB_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          DB_DATABASE: dstool
+          DB_USERNAME: root_user
+          DB_PASSWORD: ""
         run: |
           php artisan migrate \
           --seed
