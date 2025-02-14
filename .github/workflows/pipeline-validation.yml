@@ -9,11 +9,8 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-          MYSQL_ROOT_PASSWORD: ""
-          MYSQL_DATABASE: dstool
-          MYSQL_USER: root_user
-          MYSQL_PASSWORD: ""
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
         ports:
           - 3306:3306
         options: >-
@@ -64,12 +61,6 @@ jobs:
       - name: Run DB Migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DB_CONNECTION: mariadb
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: dstool
-          DB_USERNAME: root_user
-          DB_PASSWORD: ""
         run: |
           php artisan migrate \
           --seed
