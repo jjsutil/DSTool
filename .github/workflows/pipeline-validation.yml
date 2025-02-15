@@ -14,10 +14,11 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
+
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -51,33 +52,53 @@ jobs:
           php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Generate Laravel key
-        run: |
-          php artisan key:generate
+        run: php artisan key:generate
 
       - name: Set directory permissions
-        run: |
-          chmod -R 775 storage bootstrap/cache
+        run: chmod -R 775 storage bootstrap/cache
 
-      - name: Run DB Migrations
+      - name: Wait for MySQL to Start
+        run: |
+          for i in {1..10}; do
+            mysqladmin ping -h 127.0.0.1 --silent && break
+            echo "Waiting for MySQL..."
+            sleep 3
+          done
+
+      - name: Check MySQL Connection (Debug Step)
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MYSQL_PWD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         run: |
-          php artisan migrate \
-          --seed
+          mysql -h 127.0.0.1 -u root -e "SHOW DATABASES;"
 
-      - name: lint
-        run: composer check-php-cs-fix
+      - name: Run DB Migrations with fresh seeders
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          DB_USERNAME: root
+          DB_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        run: php artisan migrate --seed
 
-      - name: run phpstan
+      - name: Run lint php-cs-fix
+        run: composer php-cs-fix
+        
+      - name: Run static analysis phpstan
         run: composer phpstan
 
-      - name: Run tests and generate JUnit XML for test results
+      - name: Run Pest tests and generate JUnit XML for test results
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1 
+          DB_PORT: 3306
+          DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          DB_USERNAME: root
+          DB_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         run: |
-          php vendor/bin/phpunit \
+          php vendor/bin/pest \
           --log-junit junit.xml \
-          --coverage-clover=coverage.xml
+          --coverage-clover=coverage.xml 
 
       - name: Upload test results to Codecov for Analytics
         if: ${{ !cancelled() }}
@@ -86,7 +107,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: junit.xml
 
-      - name: Upload coverage to codecov
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -94,3 +115,4 @@ jobs:
           flags: unittests
           name: Laravel Tests
           fail_ci_if_error: true
+
