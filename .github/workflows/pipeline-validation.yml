@@ -87,7 +87,7 @@ jobs:
       - name: Run static analysis phpstan
         run: composer phpstan
 
-      - name: Run tests with phpunit and generate JUnit XML for test results
+      - name: Run Pest tests and generate JUnit XML for test results
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1 
@@ -96,9 +96,9 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         run: |
-          php vendor/bin/phpunit \
+          php vendor/bin/pest \
           --log-junit junit.xml \
-          --coverage-clover=coverage.xml
+          --coverage-clover=coverage.xml 
 
       - name: Upload test results to Codecov for Analytics
         if: ${{ !cancelled() }}
