@@ -14,10 +14,10 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
       - name: Code Checkout
@@ -57,16 +57,24 @@ jobs:
       - name: Set directory permissions
         run: chmod -R 775 storage bootstrap/cache
 
+      - name: Wait for MySQL to Start
+        run: |
+          for i in {1..10}; do
+            mysqladmin ping -h 127.0.0.1 --silent && break
+            echo "Waiting for MySQL..."
+            sleep 3
+          done
+
       - name: Check MySQL Connection (Debug Step)
         env:
           MYSQL_PWD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         run: |
-          mysql -h mysql -u root -e "SHOW DATABASES;"
+          mysql -h 127.0.0.1 -u root -e "SHOW DATABASES;"
 
       - name: Run DB Migrations
         env:
           DB_CONNECTION: mysql
-          DB_HOST: mysql  # Use "mysql" instead of "127.0.0.1"
+          DB_HOST: 127.0.0.1  # CHANGED from "mysql" to "127.0.0.1"
           DB_PORT: 3306
           DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           DB_USERNAME: root
@@ -82,7 +90,7 @@ jobs:
       - name: Run tests and generate JUnit XML for test results
         env:
           DB_CONNECTION: mysql
-          DB_HOST: mysql
+          DB_HOST: 127.0.0.1 
           DB_PORT: 3306
           DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           DB_USERNAME: root
