@@ -71,23 +71,23 @@ jobs:
         run: |
           mysql -h 127.0.0.1 -u root -e "SHOW DATABASES;"
 
-      - name: Run DB Migrations
+      - name: Run DB Migrations with fresh seeders
         env:
           DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1  # CHANGED from "mysql" to "127.0.0.1"
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           DB_USERNAME: root
           DB_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         run: php artisan migrate --seed
 
-      - name: lint
-        run: composer check-php-cs-fix
-
-      - name: run phpstan
+      - name: Run lint php-cs-fix
+        run: composer php-cs-fix
+        
+      - name: Run static analysis phpstan
         run: composer phpstan
 
-      - name: Run tests and generate JUnit XML for test results
+      - name: Run tests with phpunit and generate JUnit XML for test results
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1 
