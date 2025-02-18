@@ -46,6 +46,8 @@
         "php-cs-fix": "php-cs-fixer fix",
         "phpstan": "phpstan analyse",
         "phpunit": "phpunit",
+        "pest": "vendor/bin/pest",
+        "test": "@pest",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",

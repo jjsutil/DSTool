@@ -5,7 +5,7 @@ use PhpCsFixer\Finder;
 
 $finder = Finder::create()
     ->in(__DIR__)
-    ->exclude('vendor')
+    ->exclude(['vendor', 'storage', 'cache'])
     ->name('*.php');
 
 return (new Config())
@@ -13,5 +13,9 @@ return (new Config())
         '@PSR12' => true,
         'array_syntax' => ['syntax' => 'short'],
         'binary_operator_spaces' => ['default' => 'align_single_space_minimal'],
+        'no_unused_imports' => true,
+        'single_quote' => true,
+        'trailing_comma_in_multiline' => ['elements' => ['arrays']],
     ])
+    ->setCacheFile(__DIR__ . '/.php-cs-fixer.cache')
     ->setFinder($finder);

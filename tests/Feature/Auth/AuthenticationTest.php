@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Volt\Volt;
 
 test('login screen can be rendered', function () {
@@ -12,8 +13,10 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
-
+    $user = User::factory()->create([
+        'email'    => 'test@example.com',
+        'password' => Hash::make('password'),
+    ]);
     $component = Volt::test('pages.auth.login')
         ->set('form.email', $user->email)
         ->set('form.password', 'password');
@@ -28,8 +31,9 @@ test('users can authenticate using the login screen', function () {
 });
 
 test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
-
+    $user = User::factory()->create([
+        'password' => Hash::make('password123'),
+    ]);
     $component = Volt::test('pages.auth.login')
         ->set('form.email', $user->email)
         ->set('form.password', 'wrong-password');
