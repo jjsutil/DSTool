@@ -36,7 +36,7 @@ new #[Layout('layouts.guest')] class extends Component {
 }; ?>
 
 <div>
-    <form wire:submit="register">
+    <form wire:submit.prevent="register">
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
