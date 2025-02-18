@@ -79,7 +79,7 @@ jobs:
           DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           DB_USERNAME: root
           DB_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        run: php artisan migrate --seed
+        run: php artisan migrate:fresh --seed
 
       - name: Run lint php-cs-fix
         run: composer php-cs-fix
