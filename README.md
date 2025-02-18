@@ -14,16 +14,15 @@
 | **What is the goal of the project?**  | *making more money in the same time, tracking import operations* |
 
 ---
-
-## 3. Core Features
-| Feature                     | Description                                              |
-|-----------------------------|----------------------------------------------------------|
-| **[Feature Name]**          | *scraps, compares (google lens, using filters, strategies or targets), stores/discards (using our criteria)*   |
-| **[Feature Name]**          | *makes the best selection for stored productsbudget*   |
-| **[Feature Name]**          | *makes well shaped reports of the final quotation alternatives*   |
-| **[Feature Name]**          | *orders everything in alibaba or alieexpress for a selected quotation*   |
-| **[Feature Name]**          | *builds a massive upload taylored for mercadolibre, considering even photographs*   |
-| **[Feature Name]**          | *enhances in-built mercadolibre feats to track the performance of the "best" selection, so we can re-select (only) the good ones*   |
+## 3. Core Features  
+| Feature                                | Description                                                                 |
+|----------------------------------------|-----------------------------------------------------------------------------|
+| **Intelligent Data Scraper**           | *Extracts product data, applies image recognition (Google Lens), filters based on predefined strategies, and determines whether to store or discard items* |
+| **Automated Product Selection**        | *Evaluates and selects the most cost-effective products while adhering to budget constraints* |
+| **Comprehensive Quotation Engine**     | *Generates structured reports comparing final quotation alternatives based on price, quality, and availability* |
+| **Seamless Procurement Automation**    | *Automates order placement on Alibaba and AliExpress for selected quotations* |
+| **Scalable Marketplace Integration**   | *Prepares and optimizes bulk product listings for MercadoLibre, ensuring image and content compliance* |
+| **Performance Optimization & Re-Evaluation** | *Monitors product performance on MercadoLibre, leveraging data-driven insights to refine future selections* |
 
 ---
 
