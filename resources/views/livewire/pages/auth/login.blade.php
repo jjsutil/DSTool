@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
