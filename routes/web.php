@@ -12,9 +12,6 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::post([AuthenticatedSessionController::class, 'destroy'], 'logout')
-    ->name('logout');
-
 
 ///** Email verification */
 //
