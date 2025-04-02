@@ -54,6 +54,20 @@ jobs:
       - name: Generate Laravel key
         run: php artisan key:generate
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Ensure build directory exists
+        run: mkdir -p public/build && chmod -R 777 public/build
+
       - name: Set directory permissions
         run: chmod -R 775 storage bootstrap/cache
 
@@ -83,14 +97,14 @@ jobs:
 
       - name: Run lint php-cs-fix
         run: composer php-cs-fix
-        
+
       - name: Run static analysis phpstan
         run: composer phpstan
 
       - name: Run Pest tests and generate JUnit XML for test results
         env:
           DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1 
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           DB_USERNAME: root
@@ -98,7 +112,7 @@ jobs:
         run: |
           php vendor/bin/pest \
           --log-junit junit.xml \
-          --coverage-clover=coverage.xml 
+          --coverage-clover=coverage.xml
 
       - name: Upload test results to Codecov for Analytics
         if: ${{ !cancelled() }}
