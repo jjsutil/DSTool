@@ -85,6 +85,85 @@ The system integrates various services and technologies to achieve the product c
    ```bash
    git clone https://github.com/yourusername/DSTool.git
 
+## Feature 1
+
+![Uploading image.png…]()
+
+# MVP Development Plan - Product Matching Feature
+
+## Overview  
+This document outlines the development plan for the MVP of the Product Matching feature in the **Reimpact** project. The goal is to integrate an external Python API that handles the data processing while maintaining a structured architecture for scalability and optimization.
+
+## Architecture Diagram  
+![Architecture Diagram](diagram.png)  
+
+## Development Roadmap  
+
+| **Step** | **Task** | **Description** | **Dependencies** | **Priority** |
+|----------|---------|----------------|------------------|--------------|
+| **1** | Define API Integration | Identify endpoints for the Python API that handles product matching | API design | High |
+| **2** | Set Up Laravel Backend | Create endpoints in Laravel to communicate with the Python API | Laravel setup | High |
+| **3** | Develop Python API | Implement the logic for product matching using ML/NLP techniques if necessary | External API access | High |
+| **4** | Establish Database Schema | Design tables for storing product matches and logs | Data modeling | Medium |
+| **5** | Implement Filament UI | Use Filament to provide an admin interface for managing product matches | Backend API ready | Medium |
+| **6** | Optimize Data Flow | Ensure efficient data retrieval and processing for scalability | Caching, Indexing | High |
+| **7** | Implement Queue System | Use Laravel Queues to handle async API calls efficiently | Job dispatching setup | Medium |
+| **8** | Testing & Debugging | Perform unit, integration, and performance tests | Complete features | High |
+| **9** | Deployment & Monitoring | Deploy to production and set up logging & monitoring | Infrastructure setup | High |
+
+## Technical Stack  
+
+### **Backend (Laravel)**
+- Laravel 10
+- Filament (for UI Management)
+- Laravel Queues (for async API calls)
+- Sanctum (for authentication)
+- MySQL / MariaDB (Database)
+- Redis (for caching)
+
+### **External API (Python)**
+- FastAPI (for lightweight API)
+- HTTPX (for async HTTP requests)
+- Pandas / NumPy (for data processing)
+- Scikit-learn (if ML is needed)
+- PostgreSQL / SQLite (for temporary storage)
+
+### **Frontend (Filament)**
+- Filament Forms & Tables
+- Livewire (for interactive UI)
+- TailwindCSS (for styling)
+
+## API Endpoints  
+
+### Laravel API (Backend)
+| **Method** | **Endpoint** | **Description** |
+|------------|-------------|----------------|
+| `POST` | `/api/products/match` | Sends product data to Python API for matching |
+| `GET` | `/api/products/matches` | Retrieves matched products from DB |
+| `GET` | `/api/products/matches/{id}` | Fetches details of a specific match |
+| `DELETE` | `/api/products/matches/{id}` | Removes a match record |
+
+### Python API
+| **Method** | **Endpoint** | **Description** |
+|------------|-------------|----------------|
+| `POST` | `/match-products` | Accepts product data and returns possible matches |
+| `GET` | `/match/{id}` | Retrieves a specific match result |
+
+## Key Considerations  
+- **Scalability**: Use queues & caching to improve performance  
+- **Security**: API authentication via Laravel Sanctum  
+- **Logging & Monitoring**: Use Laravel Telescope and Sentry  
+- **Automation**: CI/CD pipelines for automatic deployment  
+
+## Next Steps  
+- Implement API stubs  
+- Define data format & transformations  
+- Build UI with Filament  
+
+---
+
+💡 *This plan will evolve as development progresses. Feedback & optimizations are always welcome!*
+
 
 (From before, February 2025)
 
