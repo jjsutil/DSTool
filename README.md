@@ -1,5 +1,93 @@
 # Project Outline
 
+(Update 04.02.2025)
+
+# DSTool (Data Scraping Tool)
+
+## Project Overview
+DSTool is an automation tool designed to compare products from multiple eCommerce platforms, specifically MercadoLibre and AliExpress, in order to help users identify the best products for importing and selling based on factors like price, availability, shipping, and seller reputation. This tool leverages APIs from MercadoLibre and AliExpress, integrates image recognition, and presents the comparison data through a user-friendly admin interface built with Filament.
+
+### Key Features:
+- **Image Recognition**: Uses Google Vision (or similar) to identify products from images and match them between MercadoLibre and AliExpress.
+- **API Integrations**:
+    - MercadoLibre API: Fetches product data for MercadoLibre.
+    - AliExpress API: Fetches product data for AliExpress.
+- **Product Comparison and Ranking**: Compares features, pricing, availability, and shipping details to generate a weighted rank of products.
+- **Admin Interface**: Uses Filament to display comparison data and manage products.
+- **Automation**: Continuously loops through the comparison process, keeping the database updated with the latest product data and rankings.
+
+## Motivation
+### Problem Statement
+As an eCommerce business, finding the best products to import and sell manually is inefficient and time-consuming. Automation can greatly speed up this process and improve decision-making.
+
+### Solution
+DSTool automates the comparison process across MercadoLibre and AliExpress, ranks products based on a weighted system, and provides a Filament-based admin interface to manage the data. This solution enables business scaling by automating repetitive tasks, allowing entrepreneurs to focus on higher-level strategy.
+
+## Technical Architecture
+The system integrates various services and technologies to achieve the product comparison and automation process:
+
+| **Component**           | **Description**                                                                 |
+|-------------------------|---------------------------------------------------------------------------------|
+| **Google Vision**        | Identifies products in images and matches them between MercadoLibre and AliExpress. |
+| **MercadoLibre API**     | Fetches product data (pricing, availability, etc.) from MercadoLibre.            |
+| **AliExpress API**       | Fetches product data (pricing, availability, etc.) from AliExpress.             |
+| **Backend**              | Python or Laravel for API integrations and data processing.                     |
+| **Frontend**             | Filament Admin Panel for managing product data and reviewing results.           |
+| **Database**             | Relational database (e.g., MySQL, PostgreSQL) for storing product information.   |
+
+### Data Flow
+1. **Google Vision (or similar)**: Identifies products from images and matches them across platforms.
+2. **MercadoLibre API**: Retrieves product details from MercadoLibre.
+3. **AliExpress API**: Retrieves product details from AliExpress.
+4. **Product Comparison**: A weighted rank is generated based on price, availability, shipping terms, etc.
+5. **Database**: Stores the comparison data for future access and analysis.
+6. **Admin Interface**: Allows users to review and manage product selections.
+
+## API Rate Limits and Considerations
+
+| **Platform**           | **Rate Limit**                                  | **Notes**                                                                 |
+|------------------------|-------------------------------------------------|---------------------------------------------------------------------------|
+| **MercadoLibre API**    | 1,000 items per request, 100-1,500 requests/min | Be mindful of rate limits to avoid throttling or blocking.               |
+| **AliExpress API**      | High rate limits, subject to freezes            | Rate limits are generous, but can temporarily freeze for excessive requests. |
+| **Google Vision API**   | $1.50 per 1,000 images                          | May incur additional costs based on usage.                               |
+
+### Handling Rate Limits
+- **MercadoLibre**: Handle rate limiting by implementing retry mechanisms or exponential backoff. Consider caching results where possible to minimize API calls.
+- **AliExpress**: Handle potential freezes by batching requests or spacing out calls.
+- **Google Vision**: Consider batching image recognition requests or only running recognition on high-priority images to reduce costs.
+
+## Challenges and Considerations
+1. **API Rate Limits**: Both MercadoLibre and AliExpress have API rate limits. Careful management of these limits is necessary to avoid service interruptions.
+2. **Cost of Image Recognition**: Regular image recognition could be costly, especially if processing a large volume of products.
+3. **Data Consistency**: Differences in product information (e.g., availability, pricing) between platforms could lead to discrepancies. It’s important to account for these in the comparison algorithm.
+4. **Scalability**: As the number of products grows, additional considerations for scaling, such as database optimizations and asynchronous processing, will be necessary.
+
+## Use Cases
+- **Automated Product Comparison**: Compare product listings from MercadoLibre and AliExpress to find the best import opportunities.
+- **Best Product Selection**: Use the weighted ranking to identify which products are the best to import.
+- **Data Management**: Review product data, rankings, and make informed decisions through the Filament Admin Interface.
+
+## Future Improvements
+- **Expand Platform Support**: Integrate additional platforms like eBay, Amazon, and Walmart for a wider product comparison pool.
+- **Advanced Ranking Algorithms**: Implement machine learning or AI to improve product ranking based on additional factors (e.g., historical sales data, trends).
+- **User Customization**: Allow users to define their own ranking criteria, adjusting the weight given to price, shipping time, reputation, etc.
+
+## Project Setup and Installation
+
+### Prerequisites
+- Python or Laravel environment setup.
+- API keys for MercadoLibre, AliExpress, and Google Vision.
+- Database (e.g., MySQL, PostgreSQL).
+- Filament Admin for managing data.
+
+### Installation Instructions
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/DSTool.git
+
+
+(From before, February 2025)
+
 ## 1. Problem Definition
 | Question                | Answer                                                             |
 |-------------------------|--------------------------------------------------------------------|
