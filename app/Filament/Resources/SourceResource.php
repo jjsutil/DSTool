@@ -60,6 +60,6 @@ class SourceResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Products';
+        return 'Products related';
     }
 }
