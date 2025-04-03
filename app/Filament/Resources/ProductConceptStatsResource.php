@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ScrapedProductResource\Pages;
-use App\Models\ScrapedProduct;
+use App\Filament\Resources\ProductConceptStatsResource\Pages;
+use App\Models\ProductConceptStats;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class ScrapedProductResource extends Resource
+class ProductConceptStatsResource extends Resource
 {
-    protected static ?string $model          = ScrapedProduct::class;
+    protected static ?string $model          = ProductConceptStats::class;
     protected static ?string $panel          = 'DashboardPanel';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -52,9 +52,9 @@ class ScrapedProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListScrapedProducts::route('/'),
-            'create' => Pages\CreateScrapedProduct::route('/create'),
-            'edit'   => Pages\EditScrapedProduct::route('/{record}/edit'),
+            'index'  => Pages\ListProductConceptStats::route('/'),
+            'create' => Pages\CreateProductConceptStats::route('/create'),
+            'edit'   => Pages\EditProductConceptStats::route('/{record}/edit'),
         ];
     }
 

@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ScrapedProductResource\Pages;
-use App\Models\ScrapedProduct;
+use App\Filament\Resources\ReviewResource\Pages;
+use App\Models\Review;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class ScrapedProductResource extends Resource
+class ReviewResource extends Resource
 {
-    protected static ?string $model          = ScrapedProduct::class;
+    protected static ?string $model          = Review::class;
     protected static ?string $panel          = 'DashboardPanel';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -52,14 +52,14 @@ class ScrapedProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListScrapedProducts::route('/'),
-            'create' => Pages\CreateScrapedProduct::route('/create'),
-            'edit'   => Pages\EditScrapedProduct::route('/{record}/edit'),
+            'index'  => Pages\ListReviews::route('/'),
+            'create' => Pages\CreateReview::route('/create'),
+            'edit'   => Pages\EditReview::route('/{record}/edit'),
         ];
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Products related';
+        return 'Buyers related';
     }
 }
