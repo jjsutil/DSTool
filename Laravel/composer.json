@@ -2,33 +2,33 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "The skeleton application for the  framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "filament/filament": "^3.2",
-        "laravel/framework": "^11.31",
-        "laravel/tinker": "^2.9",
-        "livewire/livewire": "^3.4",
-        "livewire/volt": "^1.0"
+        "vendor/filament/filament": "^3.2",
+        "vendor/laravel/framework": "^11.31",
+        "vendor/laravel/tinker": "^2.9",
+        "vendor/livewire/livewire": "^3.4",
+        "vendor/livewire/volt": "^1.0"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
-        "friendsofphp/php-cs-fixer": "^3.67",
-        "jasonmccreary/laravel-test-assertions": "^2.4",
-        "larastan/larastan": "^3.0",
-        "laravel-shift/blueprint": "^2.10",
-        "laravel/breeze": "^2.3",
-        "laravel/pail": "^1.1",
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.26",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.1",
-        "nunomaduro/larastan": "^3.0",
-        "pestphp/pest": "^3.7",
-        "pestphp/pest-plugin-laravel": "^3.0",
-        "phpstan/phpstan": "^2.1"
+        "vendor/fakerphp/faker": "^1.23",
+        "vendor/friendsofphp/php-cs-fixer": "^3.67",
+        "vendor/jasonmccreary/laravel-test-assertions": "^2.4",
+        "vendor/larastan/larastan": "^3.0",
+        "vendor/laravel-shift/blueprint": "^2.10",
+        "vendor/laravel/breeze": "^2.3",
+        "vendor/laravel/pail": "^1.1",
+        "vendor/laravel/pint": "^1.13",
+        "vendor/laravel/sail": "^1.26",
+        "vendor/mockery/mockery": "^1.6",
+        "vendor/nunomaduro/collision": "^8.1",
+        "vendor/nunomaduro/larastan": "^3.0",
+        "vendor/pestphp/pest": "^3.7",
+        "vendor/pestphp/pest-plugin-laravel": "^3.0",
+        "vendor/phpstan/phpstan": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -43,30 +43,30 @@
         }
     },
     "scripts": {
-        "php-cs-fix": "php-cs-fixer fix",
-        "phpstan": "phpstan analyse",
-        "phpunit": "phpunit",
+        "php-cs-fix": "vendor/bin/php-cs-fixer fix",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "phpunit": "vendor/bin/phpunit",
         "pest": "vendor/bin/pest",
         "test": "@pest",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi",
+          "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+          "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi",
+          "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+          "npx concurrently -c \\\"#93c5fd,#c4b5fd,#fb7185,#fdba74\\\" \\\"php artisan serve\\\" \\\"php artisan queue:listen --tries=1\\\" \\\"php artisan pail --timeout=0\\\" \\\"npm run dev\\\" --names=server,queue,logs,vite"
         ]
     },
     "extra": {
