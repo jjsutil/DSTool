@@ -43,6 +43,3 @@ public_html/hot
 storage/*.key
 /.vagrant
 
-# Other microservices / API
-/python-api
-
