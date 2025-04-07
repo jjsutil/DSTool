@@ -4,7 +4,7 @@
 
 # DSTool (Data Scraping Tool)
 
-## Project Overview
+# Project Overview
 DSTool is an automation tool designed to compare products from multiple eCommerce platforms, specifically MercadoLibre and AliExpress, in order to help users identify the best products for importing and selling based on factors like price, availability, shipping, and seller reputation. This tool leverages APIs from MercadoLibre and AliExpress, integrates image recognition, and presents the comparison data through a user-friendly admin interface built with Filament.
 
 ### Key Features:
@@ -43,7 +43,7 @@ The system integrates various services and technologies to achieve the product c
 5. **Database**: Stores the comparison data for future access and analysis.
 6. **Admin Interface**: Allows users to review and manage product selections.
 
-## API Rate Limits and Considerations
+# API Rate Limits and Considerations
 
 | **Platform**           | **Rate Limit**                                  | **Notes**                                                                 |
 |------------------------|-------------------------------------------------|---------------------------------------------------------------------------|
@@ -72,7 +72,7 @@ The system integrates various services and technologies to achieve the product c
 - **Advanced Ranking Algorithms**: Implement machine learning or AI to improve product ranking based on additional factors (e.g., historical sales data, trends).
 - **User Customization**: Allow users to define their own ranking criteria, adjusting the weight given to price, shipping time, reputation, etc.
 
-## Project Setup and Installation
+# Project Setup and Installation
 
 ### Prerequisites
 - Python or Laravel environment setup.
@@ -85,7 +85,9 @@ The system integrates various services and technologies to achieve the product c
    ```bash
    git clone https://github.com/yourusername/DSTool.git
 
-## Feature 1
+
+
+# Feature 1
 # MVP Development Plan - Product Matching Feature
 
 ## Overview  
@@ -107,28 +109,6 @@ This document outlines the development plan for the MVP of the Product Matching 
 | **7** | Implement Queue System | Use Laravel Queues to handle async API calls efficiently | Job dispatching setup | Medium |
 | **8** | Testing & Debugging | Perform unit, integration, and performance tests | Complete features | High |
 | **9** | Deployment & Monitoring | Deploy to production and set up logging & monitoring | Infrastructure setup | High |
-
-## Technical Stack  
-
-### **Backend (Laravel)**
-- Laravel 10
-- Filament (for UI Management)
-- Laravel Queues (for async API calls)
-- Sanctum (for authentication)
-- MySQL / MariaDB (Database)
-- Redis (for caching)
-
-### **External API (Python)**
-- FastAPI (for lightweight API)
-- HTTPX (for async HTTP requests)
-- Pandas / NumPy (for data processing)
-- Scikit-learn (if ML is needed)
-- PostgreSQL / SQLite (for temporary storage)
-
-### **Frontend (Filament)**
-- Filament Forms & Tables
-- Livewire (for interactive UI)
-- TailwindCSS (for styling)
 
 ## API Endpoints  
 
@@ -162,8 +142,9 @@ This document outlines the development plan for the MVP of the Product Matching 
 💡 *This plan will evolve as development progresses. Feedback & optimizations are always welcome!*
 
 # API Plan
-
 # DSTool Scraping & Comparison API – FastAPI + Laravel Integration
+
+![image](https://github.com/user-attachments/assets/e8a9a1e5-52dc-4782-b69b-00eb8ab5e9bc)
 
 ## 🧭 Project Scope
 
@@ -171,7 +152,7 @@ This module provides a backend system using **FastAPI** to handle the ingestion 
 
 ---
 
-## 📦 Key Concepts
+##  Key Concepts
 
 ### Entities
 
@@ -191,7 +172,7 @@ This module provides a backend system using **FastAPI** to handle the ingestion 
 
 ---
 
-## 🧠 Architectural Decisions
+##  Architectural Decisions
 
 | Principle         | Implementation                                                                 |
 |------------------|---------------------------------------------------------------------------------|
@@ -202,7 +183,7 @@ This module provides a backend system using **FastAPI** to handle the ingestion 
 
 ---
 
-## 🧱 Architecture Diagram
+##  Architecture Diagram
 
 ```text
          Laravel Frontend
@@ -226,7 +207,7 @@ This module provides a backend system using **FastAPI** to handle the ingestion 
 
 ---
 
-## 🤝 Laravel Integration Example
+##  Laravel Integration Example
 
 ### Sending a Scraped Product to FastAPI
 
@@ -283,7 +264,7 @@ $concept->save();
 
 ---
 
-## 🛠 Why FastAPI and Not Alternatives?
+##  Why FastAPI and Not Alternatives?
 
 | Option     | Reason Rejected                                                              |
 |------------|-------------------------------------------------------------------------------|
@@ -294,7 +275,7 @@ $concept->save();
 
 ---
 
-## 📊 KPIs & Expansion Roadmap
+##  KPIs & Expansion Roadmap
 
 The system is built to support future metrics and operational dashboards:
 
@@ -312,7 +293,7 @@ Future endpoints and enhancements may include:
 
 ---
 
-## 🧬 Laravel Domain Mapping
+##  Laravel Domain Mapping
 
 | Laravel Model       | FastAPI Entity     | Mapper Class              |
 |---------------------|--------------------|---------------------------|
@@ -322,7 +303,7 @@ Future endpoints and enhancements may include:
 
 ---
 
-## 🚀 Next Steps
+##  Next Steps
 
 - [ ] Add real scraping adapters for AliExpress & MercadoLibre.
 - [ ] Integrate image/title matching algorithms.
@@ -330,6 +311,187 @@ Future endpoints and enhancements may include:
 - [ ] Expand Laravel jobs/commands to automate ingestion.
 
 ---
+
+# 🧠 DSTool API Architecture: Modular Design for Scalable Scraping & Quotation Automation
+
+![image](https://github.com/user-attachments/assets/85d30e71-6fdc-494b-8741-bed04095a230)
+
+This document outlines the proposed API architecture and modular design for DSTool, a system that automates product scraping, intelligent matching, quotation generation, procurement automation, and marketplace integration.
+
+---
+
+## 📦 Core Feature Modules & Responsibilities
+
+| Module               | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| `scraping/`          | Extracts product data, applies image recognition (Google Lens), filters based on strategies |
+| `selection/`         | Evaluates and selects optimal products within quality and budget constraints |
+| `quotation/`         | Builds structured reports comparing options across quality, price, and availability |
+| `procurement/`       | Places automatic orders on AliExpress and Alibaba for chosen products        |
+| `listing/`           | Prepares and optimizes product listings for MercadoLibre                     |
+| `evaluation/`        | Tracks product performance and informs re-listing or selection improvements  |
+
+---
+
+## 🧱 API Endpoint Design by Feature
+
+### 🔍 `scraping/` – Intelligent Data Scraper
+
+**Responsibilities**:
+- Accept raw scraped data
+- Enrich via Google Lens
+- Filter by matching strategies
+
+**Endpoints**:
+```
+POST /scraping/products       # Accept raw scraped data
+POST /scraping/enrich         # Match with Google Lens
+GET  /scraping/pending        # View unreviewed products
+```
+
+---
+
+### 📊 `selection/` – Automated Product Selection
+
+**Responsibilities**:
+- Score scraped products
+- Rank within budget constraints
+- Recommend top candidates
+
+**Endpoints**:
+```
+POST /selection/evaluate          # Evaluate candidates
+POST /selection/budgeted         # Evaluate within constraints
+GET  /selection/recommended      # Top picks
+```
+
+---
+
+### 📋 `quotation/` – Quotation Engine
+
+**Responsibilities**:
+- Generate side-by-side comparisons
+- Group by provider/product
+- Export final quotes
+
+**Endpoints**:
+```
+POST /quotation/build             # Build structured quote
+GET  /quotation/:id               # View quote
+GET  /quotation/download/:id      # Download PDF/CSV/JSON
+```
+
+---
+
+### 🛒 `procurement/` – Procurement Automation
+
+**Responsibilities**:
+- Place real orders to marketplaces
+- Return order tracking/status
+
+**Endpoints**:
+```
+POST /procurement/order           # Submit order
+GET  /procurement/status/:id      # Check fulfillment
+```
+
+---
+
+### 🧾 `listing/` – Marketplace Integration (MercadoLibre)
+
+**Responsibilities**:
+- Prepare listings from concepts
+- Optimize text/images
+- Push to marketplace
+
+**Endpoints**:
+```
+POST /listing/prepare             # Generate listing draft
+POST /listing/publish             # Push to MercadoLibre
+GET  /listing/status/:id          # Listing health
+```
+
+---
+
+### 📈 `evaluation/` – Performance & Re-Evaluation
+
+**Responsibilities**:
+- Track marketplace metrics
+- Trigger re-selection or relisting
+
+**Endpoints**:
+```
+GET  /evaluation/performance      # Dashboard
+POST /evaluation/refresh          # Sync stats
+POST /evaluation/relist           # Re-list based on rules
+```
+
+---
+
+## 📁 Recommended Folder Structure
+
+```
+dstool/
+├── scraping/             # Intelligent scraping
+├── selection/            # Evaluation logic
+├── quotation/            # Reporting engine
+├── procurement/          # Ordering automation
+├── listing/              # Marketplace integration
+├── evaluation/           # Metrics and relisting logic
+├── shared/               # Reusable helpers (enums, settings)
+├── main.py               # FastAPI entry point
+```
+
+---
+
+## ⚙️ Architectural Justifications
+
+| Decision                     | Justification                                                                 |
+|-----------------------------|--------------------------------------------------------------------------------|
+| **Modular by feature**      | Clear separation of concerns; scalable team collaboration                     |
+| **Dedicated endpoints**     | Easy API consumption from Laravel or other clients                            |
+| **Service layer abstraction**| Business logic is testable and isolated from HTTP routing                     |
+| **Composable architecture** | You can easily orchestrate pipelines or async tasks per module                |
+
+---
+
+## 📡 Consuming the API from Laravel
+
+Use Laravel HTTP client inside a loop to consume endpoints:
+
+```php
+use Illuminate\Support\Facades\Http;
+
+foreach ($scrapedData as $item) {
+    $response = Http::post('https://dstool-api.local/scraping/products', [
+        'title' => $item['title'],
+        'image_url' => $item['image'],
+        'price' => $item['price'],
+        // ...
+    ]);
+
+    $scrapedProduct = ScrapedProductMapper::fromApiResponse($response->json());
+    ScrapedProduct::updateOrCreate(['external_id' => $scrapedProduct->external_id], $scrapedProduct->toArray());
+}
+```
+
+Use `Mappers` and a `Domain Layer` to handle transformation between API DTOs and Laravel Eloquent models cleanly.
+
+---
+
+## ✅ Summary
+
+This design ensures:
+- **Clear separation of concerns**
+- **Fast iteration and testability**
+- **Laravel-friendly APIs**
+- **Support for future providers and scaling**
+
+---
+
+
+
+
 
 (From before, February 2025)
 
