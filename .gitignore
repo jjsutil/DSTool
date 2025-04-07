@@ -11,7 +11,6 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
-.php-cs-fixer.php
 .php-cs-fixer.cache
 Homestead.json
 Homestead.yaml
