@@ -139,14 +139,14 @@ This document outlines the development plan for the MVP of the Product Matching 
 
 ---
 
-💡 *This plan will evolve as development progresses. Feedback & optimizations are always welcome!*
+ *This plan will evolve as development progresses. Feedback & optimizations are always welcome!*
 
 # API Plan
 # DSTool Scraping & Comparison API – FastAPI + Laravel Integration
 
 ![image](https://github.com/user-attachments/assets/e8a9a1e5-52dc-4782-b69b-00eb8ab5e9bc)
 
-## 🧭 Project Scope
+##  Project Scope
 
 This module provides a backend system using **FastAPI** to handle the ingestion of scraped product data, comparison of products from different providers (e.g., AliExpress, MercadoLibre), and construction of a unified `ProductConcept`. The **Laravel** frontend consumes this API and stores the results in its database for user interaction and reporting.
 
@@ -312,7 +312,7 @@ Future endpoints and enhancements may include:
 
 ---
 
-# 🧠 DSTool API Architecture: Modular Design for Scalable Scraping & Quotation Automation
+#  DSTool API Architecture: Modular Design for Scalable Scraping & Quotation Automation
 
 ![image](https://github.com/user-attachments/assets/85d30e71-6fdc-494b-8741-bed04095a230)
 
@@ -320,7 +320,7 @@ This document outlines the proposed API architecture and modular design for DSTo
 
 ---
 
-## 📦 Core Feature Modules & Responsibilities
+##  Core Feature Modules & Responsibilities
 
 | Module               | Description                                                                 |
 |----------------------|-----------------------------------------------------------------------------|
@@ -333,7 +333,7 @@ This document outlines the proposed API architecture and modular design for DSTo
 
 ---
 
-## 🧱 API Endpoint Design by Feature
+##  API Endpoint Design by Feature
 
 ### 🔍 `scraping/` – Intelligent Data Scraper
 
@@ -351,7 +351,7 @@ GET  /scraping/pending        # View unreviewed products
 
 ---
 
-### 📊 `selection/` – Automated Product Selection
+###  `selection/` – Automated Product Selection
 
 **Responsibilities**:
 - Score scraped products
@@ -367,7 +367,7 @@ GET  /selection/recommended      # Top picks
 
 ---
 
-### 📋 `quotation/` – Quotation Engine
+###  `quotation/` – Quotation Engine
 
 **Responsibilities**:
 - Generate side-by-side comparisons
@@ -383,7 +383,7 @@ GET  /quotation/download/:id      # Download PDF/CSV/JSON
 
 ---
 
-### 🛒 `procurement/` – Procurement Automation
+###  `procurement/` – Procurement Automation
 
 **Responsibilities**:
 - Place real orders to marketplaces
@@ -397,7 +397,7 @@ GET  /procurement/status/:id      # Check fulfillment
 
 ---
 
-### 🧾 `listing/` – Marketplace Integration (MercadoLibre)
+###  `listing/` – Marketplace Integration (MercadoLibre)
 
 **Responsibilities**:
 - Prepare listings from concepts
@@ -413,7 +413,7 @@ GET  /listing/status/:id          # Listing health
 
 ---
 
-### 📈 `evaluation/` – Performance & Re-Evaluation
+###  `evaluation/` – Performance & Re-Evaluation
 
 **Responsibilities**:
 - Track marketplace metrics
@@ -428,7 +428,7 @@ POST /evaluation/relist           # Re-list based on rules
 
 ---
 
-## 📁 Recommended Folder Structure
+## Recommended Folder Structure
 
 ```
 dstool/
@@ -444,7 +444,7 @@ dstool/
 
 ---
 
-## ⚙️ Architectural Justifications
+##  Architectural Justifications
 
 | Decision                     | Justification                                                                 |
 |-----------------------------|--------------------------------------------------------------------------------|
@@ -455,7 +455,7 @@ dstool/
 
 ---
 
-## 📡 Consuming the API from Laravel
+##  Consuming the API from Laravel
 
 Use Laravel HTTP client inside a loop to consume endpoints:
 
@@ -479,7 +479,7 @@ Use `Mappers` and a `Domain Layer` to handle transformation between API DTOs and
 
 ---
 
-## ✅ Summary
+##  Summary
 
 This design ensures:
 - **Clear separation of concerns**
@@ -854,6 +854,128 @@ Budget constraints: Should we add a budget table or max_budget field to ProductC
 Reporting system: Should reports be stored in a separate reports table?
 Order tracking: Do you want to track orders in the DB or rely on external integrations?
 Mercadolibre automation: If we manage massive uploads, should we track listing statuses (published, pending, failed)?
+
+
+
+
+
+# API Features
+
+## 🔎 SearchRecipe System — URL Collector & Async Scraping Pipeline
+
+This module allows users to create reusable **search recipes** that are used to generate filtered AliExpress product searches, gather a list of relevant product URLs, and spawn asynchronous jobs to scrape product data.
+
+---
+
+### System Overview
+
+```mermaid
+flowchart TD
+    A[User creates SearchRecipe] --> B[Backend stores SearchRecipe]
+    B --> C[Querier reads SearchRecipe config]
+    C --> D[Builds filtered AliExpress search URLs]
+    D --> E[HTTPX fetches product listings]
+    E --> F[Extract product cards & links]
+    F --> G[Store top URLs into ProductListing table]
+    G --> H[Async job queue triggers detailed scraping per URL]
+```
+
+---
+
+### Models
+
+#### `SearchRecipe`
+
+| Field        | Type         | Description                                 |
+|--------------|--------------|---------------------------------------------|
+| `id`         | UUID         | Unique ID                                   |
+| `name`       | string       | Recipe title                                |
+| `keywords`   | List[string] | Keywords to search                          |
+| `min_price`  | float?       | Optional price filter (min)                 |
+| `max_price`  | float?       | Optional price filter (max)                 |
+| `sort_by`    | string?      | e.g. `orders_desc`, `price_asc`             |
+| `category`   | string?      | Optional category or tag                    |
+| `created_at` | datetime     | Timestamp                                   |
+
+#### `ProductListing`
+
+| Field             | Type     | Description                                  |
+|-------------------|----------|----------------------------------------------|
+| `id`              | UUID     | Unique ID                                    |
+| `search_recipe_id`| UUID     | FK to SearchRecipe                           |
+| `product_url`     | string   | URL of the product                           |
+| `title`           | string   | Title (if available from search card)        |
+| `price`           | float?   | Price preview                                |
+| `image_url`       | string?  | Thumbnail image                              |
+| `imported`        | boolean  | Whether full data was scraped                |
+
+---
+
+### API Endpoints
+
+```http
+# Create a new search recipe
+POST /search-recipes/
+
+# List all saved search recipes
+GET /search-recipes/
+
+# Execute recipe: gather URLs and queue scraping jobs
+POST /search-recipes/{id}/run
+
+# Get all product URLs collected by a recipe
+GET /search-recipes/{id}/urls
+```
+
+---
+
+###  Workflow Summary
+
+1. **User** defines a new `SearchRecipe` with keywords and filters.
+2. **Querier** builds AliExpress search URLs using the recipe.
+3. **HTTPX engine** scrapes HTML pages, extracting top product cards.
+4. **Relevant product URLs** are saved to the `ProductListing` table.
+5. An **async background job** is triggered for each URL, fetching full product data and storing it.
+
+---
+
+### Benefits
+
+- **Separation of concerns**: Recipes define *what* to search; querier handles *how*.
+- **Scalability**: Easily plug in other marketplaces (e.g., MercadoLibre).
+- **Extensible**: Future AI-powered keyword generation or batch category expansion.
+- **Asynchronous**: Queueing system makes it fast and non-blocking.
+
+---
+
+### ✅ Example Usage
+
+```json
+POST /search-recipes
+{
+  "name": "USB Hubs under $15",
+  "keywords": ["usb hub", "usb splitter"],
+  "min_price": 5,
+  "max_price": 15,
+  "sort_by": "orders_desc"
+}
+```
+
+This creates a recipe that the user can execute later with:
+
+```http
+POST /search-recipes/{id}/run
+```
+
+This will gather URLs, enqueue scraping jobs, and feed a list of products into the system.
+
+---
+
+> Designed using **KISS** and **SOLID** principles: simple models, clear responsibility layers, and extensible async processing.
+
+
+
+
 
 
 
