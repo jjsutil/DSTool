@@ -161,8 +161,179 @@ This document outlines the development plan for the MVP of the Product Matching 
 
 💡 *This plan will evolve as development progresses. Feedback & optimizations are always welcome!*
 
+# API Plan
+
+# DSTool Scraping & Comparison API – FastAPI + Laravel Integration
+
+## 🧭 Project Scope
+
+This module provides a backend system using **FastAPI** to handle the ingestion of scraped product data, comparison of products from different providers (e.g., AliExpress, MercadoLibre), and construction of a unified `ProductConcept`. The **Laravel** frontend consumes this API and stores the results in its database for user interaction and reporting.
+
+---
+
+## 📦 Key Concepts
+
+### Entities
+
+| Entity              | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| `ScrapedProduct`     | Represents a product listing from a provider (e.g., AliExpress, ML).       |
+| `ProductConcept`     | Represents a globally recognized product idea, grouping similar products.   |
+| `ComparisonResult`   | Result of a product comparison including confidence score.                  |
+
+### Workflow Summary
+
+1. Laravel app scrapes or receives products from external platforms.
+2. Sends data to FastAPI via `/products/scrape`.
+3. After accumulating enough products, Laravel calls `/products/compare` to group similar ones.
+4. FastAPI returns a `ProductConcept` built from those.
+5. Laravel stores all this using mappers and Eloquent models.
+
+---
+
+## 🧠 Architectural Decisions
+
+| Principle         | Implementation                                                                 |
+|------------------|---------------------------------------------------------------------------------|
+| **Modular Design** | Each responsibility in its own file: routes, services, models, DB.             |
+| **Extensible**     | Starts with an in-memory database, pluggable with PostgreSQL or others later. |
+| **Async-native**   | FastAPI uses async to handle IO-bound scraping tasks efficiently.             |
+| **Laravel-First**  | Designed to be consumed cleanly by Laravel via HTTP + Mapper layer.            |
+
+---
+
+## 🧱 Architecture Diagram
+
+```text
+         Laravel Frontend
+          ↕ HTTP Client
++-----------------------------+
+|       FastAPI App          |
++-----------------------------+
+| /products/                 |
+| ├── POST /scrape           | ← accepts scraped product
+| ├── POST /compare          | ← compares & builds concept
+| └── GET  /all              | ← for listing/debugging
++-----------------------------+
+|   Routers: products.py      |
+|   Models: ScrapedProduct,   |
+|           ProductConcept    |
+|   Services: matcher.py,     |
+|             aliexpress.py   |
+|   DB: memory_store.py       |
++-----------------------------+
+```
+
+---
+
+## 🤝 Laravel Integration Example
+
+### Sending a Scraped Product to FastAPI
+
+```php
+$response = Http::post('http://localhost:8000/products/scrape', [
+    'title' => $title,
+    'description' => $desc,
+    'price' => $price,
+    'currency' => 'USD',
+    'image_url' => $image,
+    'provider' => 'AliExpress',
+    'source_url' => $source,
+    'fetched_at' => now()->toIso8601String(),
+]);
+```
+
+### Mapping API Result to Eloquent Model
+
+```php
+class ScrapedProductMapper
+{
+    public static function fromApi(array $data): ScrapedProduct
+    {
+        return new ScrapedProduct([
+            'external_id' => $data['id'],
+            'title' => $data['title'],
+            'price' => $data['price'],
+            'image_url' => $data['image_url'],
+            'provider' => $data['provider'],
+            'source_url' => $data['source_url'],
+            'fetched_at' => $data['fetched_at'],
+        ]);
+    }
+}
+```
+
+### Comparison and Concept Building in Loop
+
+```php
+$scrapedIds = [];
+
+foreach ($sources as $source) {
+    $response = Http::post('http://localhost:8000/products/scrape', $source->toArray());
+    $scraped = ScrapedProductMapper::fromApi($response->json());
+    $scraped->save();
+
+    $scrapedIds[] = $scraped->external_id;
+}
+
+$comparison = Http::post('http://localhost:8000/products/compare', $scrapedIds);
+$concept = ProductConceptMapper::fromApi($comparison->json());
+$concept->save();
+```
+
+---
+
+## 🛠 Why FastAPI and Not Alternatives?
+
+| Option     | Reason Rejected                                                              |
+|------------|-------------------------------------------------------------------------------|
+| Flask      | Not async-native, slower evolution, more boilerplate.                        |
+| Django     | Too monolithic for microservice-style scraping.                              |
+| Full ORM   | Overkill during early prototyping; in-memory store is faster for iteration.  |
+| Direct scraping in route | Violates separation of concerns and testing boundaries.       |
+
+---
+
+## 📊 KPIs & Expansion Roadmap
+
+The system is built to support future metrics and operational dashboards:
+
+- 📈 Sales volume tracking
+- 📉 Price & sentiment trends
+- 📊 Market share by provider
+- 📦 Stock and shipping indicators
+- ✅ Manual review flagging system
+
+Future endpoints and enhancements may include:
+
+- `/reviews/queue` – Manual product review queue
+- `/scraped/history` – Versioned product listings
+- `/images/match` – Visual comparison via Google Lens integration
+
+---
+
+## 🧬 Laravel Domain Mapping
+
+| Laravel Model       | FastAPI Entity     | Mapper Class              |
+|---------------------|--------------------|---------------------------|
+| `ScrapedProduct`     | `ScrapedProduct`    | `ScrapedProductMapper`    |
+| `ProductConcept`     | `ProductConcept`    | `ProductConceptMapper`    |
+| (optional) `Comparison` | `ComparisonResult` | `ComparisonMapper`        |
+
+---
+
+## 🚀 Next Steps
+
+- [ ] Add real scraping adapters for AliExpress & MercadoLibre.
+- [ ] Integrate image/title matching algorithms.
+- [ ] Containerize FastAPI for deployment in your infrastructure.
+- [ ] Expand Laravel jobs/commands to automate ingestion.
+
+---
 
 (From before, February 2025)
+
+# The problem
 
 ## 1. Problem Definition
 | Question                | Answer                                                             |
