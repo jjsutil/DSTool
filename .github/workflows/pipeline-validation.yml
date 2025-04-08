@@ -122,11 +122,15 @@ jobs:
           files: junit.xml
 
       - name: Upload coverage to Codecov
+        continue-on-error: true
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
           flags: unittests
           name: Laravel Tests
-          fail_ci_if_error: true
+        fail_ci_if_error: false
 
+      - name: Warn if Codecov failed
+        if: failure() && steps.codecov_upload.outcome == 'failure'
+        run: echo "::warning title=Codecov Failed::Coverage upload failed. Please check the Codecov logs for more details."
