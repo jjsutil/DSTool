@@ -7,6 +7,7 @@ namespace App\Providers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\Horizon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::shouldBeStrict();
         $this->configureCommands();
+        Horizon::routeMailNotificationsTo(config('horizon.admin_mail'));
     }
 
     private function configureCommands(): void

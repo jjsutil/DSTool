@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Laravel\Horizon\Horizon;
 
 require __DIR__.'/auth.php';
 
@@ -12,6 +13,10 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+//Horizon::auth(function ($request) {
+//    // TODO: Lock this down (e.g. admin-only)
+//    return true;
+//});
 
 ///** Email verification */
 //

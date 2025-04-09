@@ -2,8 +2,9 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    Illuminate\Filesystem\FilesystemServiceProvider::class,
-    App\Providers\VoltServiceProvider::class,
     App\Providers\Filament\DashboardPanelProvider::class,
+    App\Providers\HorizonServiceProvider::class,
+    App\Providers\VoltServiceProvider::class,
+    Illuminate\Filesystem\FilesystemServiceProvider::class,
     Illuminate\View\ViewServiceProvider::class,
 ];

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
@@ -13,6 +15,10 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+
+// TODO: Add backend validation (e.g., price bounds, required fields, array validation)
+// TODO: Replace static category/sort_by options with dynamic enum or API-based source
+// TODO: Implement a proper Money value object if currency handling gets complex
 
 class SearchRecipeResource extends Resource
 {
@@ -77,23 +83,23 @@ class SearchRecipeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Recipe Name'),
-                Tables\Columns\TextColumn::make('min_price')->label('Min Price'),
-                Tables\Columns\TextColumn::make('max_price')->label('Max Price'),
+                Tables\Columns\TextColumn::make('name')->label('Recipe Name')->sortable(),
+                Tables\Columns\TextColumn::make('min_price')->label('Min Price')->sortable(),
+                Tables\Columns\TextColumn::make('max_price')->label('Max Price')->sortable(),
                 TextColumn::make('keywords')
                     ->label('Keywords (Tags)')
                     ->formatStateUsing(function ($state) {
-                        $tags = explode(',', $state);
-                        $tags = array_map('trim', $tags);
+                        $tags      = explode(',', $state);
+                        $tags      = array_map('trim', $tags);
                         $tagChunks = array_chunk($tags, 5);
                         return collect($tagChunks)
                             ->map(function ($chunk) {
                                 return implode(' ', array_map(function ($tag, $index) {
-                                        $background = $index % 2 === 0
-                                            ? 'rgba(255, 250, 205, 0.7)' // light lemon chiffon
-                                            : 'rgba(245, 222, 179, 0.7)'; // very light wheat brown
+                                    $background = $index % 2 === 0
+                                        ? 'rgba(255, 250, 205, 0.7)' // light lemon chiffon
+                                        : 'rgba(245, 222, 179, 0.7)'; // very light wheat brown
 
-                                        return "<span style='
+                                    return "<span style='
                                                     display: inline-block;
                                                     padding: 4px 10px;
                                                     margin: 2px;
@@ -103,15 +109,40 @@ class SearchRecipeResource extends Resource
                                                     border-radius: 9999px;
                                                     font-weight: 500;
                                                 '>$tag</span>";
-                                    }, $chunk, array_keys($chunk))) . '<br>';
+                                }, $chunk, array_keys($chunk))) . '<br>';
                             })
                             ->implode('');
                     })
                     ->html(),
             ])
             ->filters([
-                // Filters can be added here, like for category or price range
+                Tables\Filters\Filter::make('min_price')
+                    ->form([
+                        Forms\Components\TextInput::make('min_price')
+                            ->numeric(),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when($data['min_price'], fn ($q) => $q->where('min_price', '>=', $data['min_price']));
+                    }),
+
+                Tables\Filters\Filter::make('max_price')
+                    ->form([
+                        Forms\Components\TextInput::make('max_price')
+                            ->numeric(),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when($data['max_price'], fn ($q) => $q->where('max_price', '<=', $data['max_price']));
+                    }),
+
+                Tables\Filters\Filter::make('name')
+                    ->form([
+                        Forms\Components\TextInput::make('name'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when($data['name'], fn ($q) => $q->where('name', 'like', '%' . $data['name'] . '%'));
+                    }),
             ])
+
             ->actions([
                 Tables\Actions\EditAction::make(),
 
@@ -123,7 +154,7 @@ class SearchRecipeResource extends Resource
                     ->action(function (SearchRecipe $record): void {
                         LaunchSearchRecipeLaravelJob::dispatch($record);
                         Notification::make()
-                            ->title('🔍Search launched!')
+                            ->title(' 🔍Search launched!')
                             ->body('Products will begin appearing shortly.')
                             ->success()
                             ->send();
@@ -146,9 +177,9 @@ class SearchRecipeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSearchRecipes::route('/'),
+            'index'  => Pages\ListSearchRecipes::route('/'),
             'create' => Pages\CreateSearchRecipe::route('/create'),
-            'edit' => Pages\EditSearchRecipe::route('/{record}/edit'),
+            'edit'   => Pages\EditSearchRecipe::route('/{record}/edit'),
         ];
     }
 

@@ -26,9 +26,9 @@ class DatabaseSeeder extends Seeder
             ]);
 
             DB::table('users')->insert([
-                'id' => Str::uuid(),
-                'name'  => 'Valentina Hennings',
-                'email' => 'vale_hennings@hotmail.com',
+                'id'       => Str::uuid(),
+                'name'     => 'Valentina Hennings',
+                'email'    => 'vale_hennings@hotmail.com',
                 'password' => Hash::make('friends<3'),
             ]);
 
