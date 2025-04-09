@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,16 +21,18 @@ class TwoFactorsAuthenticationMiddleware
      */
     public function handle(Request $request, Closure $next): Response|RedirectResponse
     {
-        if (is_null(Auth::user()) || App::environment(['local', 'development'])) {
-            return $next($request);
-        }
-        /** @phpstan-ignore-next-line  */
-        $userHasTwoFactorsEmpty = is_null(Auth::user()?->two_factor_secret);
-        /** @phpstan-ignore-next-line  */
-        $companyRequiresTwoFactor = (bool)Auth::user()?->company?->require_2fa;
-        if ($userHasTwoFactorsEmpty === true && $companyRequiresTwoFactor === true && Auth::check()) {
-            return redirect('user/profile');
-        }
+        //        if (is_null(Auth::user()) || App::environment(['local', 'development'])) {
+        //            return $next($request);
+        //        }
+
+        //        /** @var User $user */
+        //        $user = Auth::user(); TODO Consider implementation of 2FA
+        //
+        //        $userHasTwoFactorsEmpty = is_null($user?->two_factor_secret);
+        //        $companyRequiresTwoFactor = (bool) $user?->company?->require_2fa;
+        //        if ($userHasTwoFactorsEmpty && $companyRequiresTwoFactor && Auth::check()) {
+        //            return redirect()->route('profile.show');
+        //        }
         return $next($request);
     }
 }

@@ -17,10 +17,10 @@ class ForceChangePassword
         if (is_null(Auth::user()) || App::environment(['local', 'development'])) {
             return $next($request);
         }
-        if (is_null($request->user()?->updated_at)) {
-            return redirect()->route('profile.show')
-                ->with('error', 'You must change your password to continue.');
-        }
+        //        if (is_null($request->user()?->updated_at)) {
+        //            return redirect()->route('profile.show')
+        //                ->with('error', 'You must change your password to continue.');
+        //        } TODO consider implementation
         return $next($request);
     }
 }

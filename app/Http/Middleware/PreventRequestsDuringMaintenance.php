@@ -14,6 +14,8 @@ class PreventRequestsDuringMaintenance extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+//        '/api/health-check', TODO check these routes and add
+//        '/admin/login',
+//        '/admin/maintenance/disable'
     ];
 }
