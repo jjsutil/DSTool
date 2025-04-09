@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * App\Models\Provider
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property int $source_id
+ * @property string $name
+ */
+
 class Provider extends Model
 {
     use HasFactory;
@@ -13,7 +22,7 @@ class Provider extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',
@@ -24,7 +33,7 @@ class Provider extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'id' => 'integer',
