@@ -91,7 +91,7 @@ The system integrates various services and technologies to achieve the product c
 # MVP Development Plan - Product Matching Feature
 
 ## Overview  
-This document outlines the development plan for the MVP of the Product Matching feature in the **Reimpact** project. The goal is to integrate an external Python API that handles the data processing while maintaining a structured architecture for scalability and optimization.
+This document outlines the development plan for the MVP of the Product. The goal is to integrate an external Python API that handles the data processing while maintaining a structured architecture for scalability and optimization.
 
 ## Architecture Diagram  
 ![image](https://github.com/user-attachments/assets/88078c42-3b26-478e-8b7d-fc56283e4eb5)
