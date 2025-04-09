@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\ProviderResource\Pages;
 use App\Models\Provider;
 use Filament\Forms\Form;
@@ -60,6 +61,6 @@ class ProviderResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Providers related';
+        return ResourceNavigationGroups::PROVIDERS->label();
     }
 }

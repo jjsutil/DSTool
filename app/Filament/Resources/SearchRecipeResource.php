@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\SearchRecipeResource\Pages;
 use App\Jobs\LaunchSearchRecipeJob as LaunchSearchRecipeLaravelJob;
 use App\Models\SearchRecipe;
@@ -88,31 +89,7 @@ class SearchRecipeResource extends Resource
                 Tables\Columns\TextColumn::make('max_price')->label('Max Price')->sortable(),
                 TextColumn::make('keywords')
                     ->label('Keywords (Tags)')
-                    ->formatStateUsing(function ($state) {
-                        $tags      = explode(',', $state);
-                        $tags      = array_map('trim', $tags);
-                        $tagChunks = array_chunk($tags, 5);
-                        return collect($tagChunks)
-                            ->map(function ($chunk) {
-                                return implode(' ', array_map(function ($tag, $index) {
-                                    $background = $index % 2 === 0
-                                        ? 'rgba(255, 250, 205, 0.7)' // light lemon chiffon
-                                        : 'rgba(245, 222, 179, 0.7)'; // very light wheat brown
-
-                                    return "<span style='
-                                                    display: inline-block;
-                                                    padding: 4px 10px;
-                                                    margin: 2px;
-                                                    background-color: $background;
-                                                    color: #333;
-                                                    font-size: 0.875rem;
-                                                    border-radius: 9999px;
-                                                    font-weight: 500;
-                                                '>$tag</span>";
-                                }, $chunk, array_keys($chunk))) . '<br>';
-                            })
-                            ->implode('');
-                    })
+                    ->formatStateUsing(fn ($state) => self::formatKeywordsAsTags($state))
                     ->html(),
             ])
             ->filters([
@@ -185,6 +162,38 @@ class SearchRecipeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'User, Business and Integrations';
+        return ResourceNavigationGroups::BUSINESS->label();
+    }
+
+    protected static function formatKeywordsAsTags(?string $keywords): string
+    {
+        if (empty($keywords)) {
+            return '';
+        }
+
+        $tags      = explode(',', $keywords);
+        $tags      = array_map('trim', $tags);
+        $tagChunks = array_chunk($tags, 5);
+
+        return collect($tagChunks)
+            ->map(function ($chunk) {
+                return implode(' ', array_map(function ($tag, $index) {
+                    $background = $index % 2 === 0
+                        ? 'rgba(255, 250, 205, 0.7)' // light lemon chiffon
+                        : 'rgba(245, 222, 179, 0.7)'; // very light wheat brown
+
+                    return "<span style='
+                                display: inline-block;
+                                padding: 4px 10px;
+                                margin: 2px;
+                                background-color: $background;
+                                color: #333;
+                                font-size: 0.875rem;
+                                border-radius: 9999px;
+                                font-weight: 500;
+                            '>$tag</span>";
+                }, $chunk, array_keys($chunk))) . '<br>';
+            })
+            ->implode('');
     }
 }

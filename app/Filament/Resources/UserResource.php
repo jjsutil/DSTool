@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms;
@@ -89,6 +90,6 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'User, Business and Integrations';
+        return ResourceNavigationGroups::BUSINESS->label();
     }
 }
