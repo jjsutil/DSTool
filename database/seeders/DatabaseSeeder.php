@@ -17,11 +17,6 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(10)->create();
 
-        User::factory()->create([
-            'name'  => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-
         if (app()->environment('local')) {
             DB::table('users')->insert([
                 'id'       => Str::uuid(),
@@ -29,6 +24,14 @@ class DatabaseSeeder extends Seeder
                 'email'    => 'admin@dstool.cl',
                 'password' => Hash::make('12341234'),
             ]);
+
+            DB::table('users')->insert([
+                'id' => Str::uuid(),
+                'name'  => 'Valentina Hennings',
+                'email' => 'vale_hennings@hotmail.com',
+                'password' => Hash::make('friends<3'),
+            ]);
+
         }
     }
 }
