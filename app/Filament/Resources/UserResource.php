@@ -13,11 +13,11 @@ use Filament\Forms\Components\Section;
 
 class UserResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model           = User::class;
     protected static ?string $navigationLabel = 'Users';
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon  = 'heroicon-o-user-group';
     protected static ?string $navigationGroup = 'User, Business and Integrations';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort     = 2;
     public static function form(Form $form): Form
     {
         return $form
@@ -94,9 +94,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
+            'index'  => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'edit'   => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 
