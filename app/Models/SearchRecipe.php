@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -25,7 +27,7 @@ class SearchRecipe extends Model
     use HasFactory;
 
     public $incrementing = false;
-    protected $keyType = 'string';
+    protected $keyType   = 'string';
 
     protected $fillable = [
         'id',
@@ -38,8 +40,8 @@ class SearchRecipe extends Model
     ];
 
     protected $casts = [
-        'id' => 'string',
-        'keywords' => 'array',
+        'id'        => 'string',
+        'keywords'  => 'array',
         'min_price' => 'decimal:2',
         'max_price' => 'decimal:2',
     ];

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
@@ -15,9 +17,9 @@ class SuperAdminOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()?->isSuperAdmin()) {
-            return $next($request);
-        }
+        //        if ($request->user()?->isSuperAdmin()) {
+        //            return $next($request);
+        //        } TODO add roles to implement SuperAdmin features
         abort(403, 'Unauthorized action.');
     }
 }
