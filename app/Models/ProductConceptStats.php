@@ -5,7 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * Class ProductConceptStats
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property string $product_concept_id
+ * @property float $average_sales
+ * @property float $stdev_sales
+ * @property int $publications_number
+ * @property float $ali_to_meli_rate
+ * @property float $growth_rate
+ * @property float $price_trend
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class ProductConceptStats extends Model
 {
     use HasFactory;
@@ -13,7 +29,7 @@ class ProductConceptStats extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',
@@ -29,7 +45,7 @@ class ProductConceptStats extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'id'               => 'integer',
