@@ -129,7 +129,7 @@ jobs:
           files: ./coverage.xml
           flags: unittests
           name: Laravel Tests
-        fail_ci_if_error: false
+          fail_ci_if_error: false
 
       - name: Warn if Codecov failed
         if: failure() && steps.codecov_upload.outcome == 'failure'
