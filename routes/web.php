@@ -9,6 +9,10 @@ Route::get('/admin', fn () => redirect('/'));
 Route::get('/dashboard', fn () => redirect('/'));
 Route::get('/dashboard', fn () => redirect('/'))->name('dashboard');
 
+Route::view('profile', 'profile')
+    ->middleware(['auth'])
+    ->name('profile');
+
 //Horizon::auth(function ($request) {
 //    // TODO: Lock this down (e.g. admin-only)
 //    return true;
