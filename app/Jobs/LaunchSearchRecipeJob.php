@@ -7,11 +7,16 @@ namespace App\Jobs;
 use App\Models\SearchRecipe;
 use App\Modules\MVP\Infrastructure\Services\Mappers\SearchRecipeMapper;
 use Carbon\Exceptions\InvalidFormatException;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Throwable;
+use App\Exceptions\SearchRecipeException;
+use App\Exceptions\ProductRankerResponseException;
+use App\Exceptions\ProductRankerException;
 
 class LaunchSearchRecipeJob implements ShouldQueue
 {
@@ -23,45 +28,83 @@ class LaunchSearchRecipeJob implements ShouldQueue
     public function __construct(
         public readonly SearchRecipe $searchRecipe
     ) {
-        Log::info('LaunchSearchRecipeJob dispatched.', [
-            'id'   => $this->searchRecipe->id,
-            'name' => $this->searchRecipe->name,
-        ]);
+        $this->logJobDispatch();
     }
 
+    /**
+     * @throws ProductRankerException
+     * @throws SearchRecipeException
+     */
     public function handle(): void
     {
-        if (!$this->searchRecipe || !$this->searchRecipe->id) {
-            throw new InvalidFormatException('Invalid SearchRecipe provided.');
-        }
+        $this->handleInvalidRecipe();
 
         try {
             $domainModel = SearchRecipeMapper::fromEloquentToDomain($this->searchRecipe);
             $payload     = SearchRecipeMapper::fromDomainToArray($domainModel);
-            $response    = Http::post(config('services.python_api.search_recipe_crawler_url'), $payload);
+            $url         = config('services.python_api.product_ranker_search_recipe_url');
+            $response    = Http::get($url, $payload);
+            Log::info('GET query result from url' .  $url);
 
-            if ($response->failed()) {
-                throw new CrawlerResponseException('External service failed to process SearchRecipe.');
-            }
+            $this->handleFailedResponse($response);
+            $this->logSuccessfulRecipeSent($response);
 
-            Log::info('✅ SearchRecipe sent to external service.', [
-                'status' => $response->status(),
-                'body'   => $response->body(),
-            ]);
-        } catch (CrawlerException $e) {
-            Log::error('❌ Failed to process SearchRecipe with external service.', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+        } catch (ProductRankerException $e) {
+            $this->logRankerException($e);
 
             throw $e;
         } catch (Throwable $e) {
-            Log::error('❌ Unexpected error while processing SearchRecipe.', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            $this->logUnexpected($e);
 
             throw new SearchRecipeException('An unexpected error occurred while processing SearchRecipe.');
         }
+    }
+
+    /**
+     * @throws ProductRankerResponseException
+     */
+    private function handleFailedResponse(Response $response): void
+    {
+        if ($response->failed()) {
+            throw new ProductRankerResponseException('External service failed to process SearchRecipe.');
+        }
+    }
+
+    private function handleInvalidRecipe(): void
+    {
+        if (!$this->searchRecipe || !$this->searchRecipe->id) {
+            throw new InvalidFormatException('Invalid SearchRecipe provided.');
+        }
+    }
+
+    private function logUnexpected(Throwable|Exception $e): void
+    {
+        Log::error('❌ Unexpected error while processing SearchRecipe.', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+    }
+
+    private function logRankerException(ProductRankerException|Exception $e): void
+    {
+        Log::error('❌ Failed to process SearchRecipe with external service.', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+    }
+
+    private function logSuccessfulRecipeSent(Response $response): void
+    {
+        Log::info('✅ SearchRecipe sent to external service.', [
+            'status' => $response->status(),
+            'body'   => $response->body(),
+        ]);
+    }
+
+    private function logJobDispatch(): void
+    {
+        Log::info('LaunchSearchRecipeJob dispatched.', [
+            'id'   => $this->searchRecipe->id,
+            'name' => $this->searchRecipe->name,]);
     }
 }

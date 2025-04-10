@@ -36,7 +36,7 @@ return [
     ],
 
     'python_api' => [
-        'search_recipe_crawler_url' => env('PYTHON_API_SEARCH_RECIPE_URL'),
+        'product_ranker_search_recipe_url' => env('PYTHON_API_SEARCH_RECIPE_URL'),
     ],
 
 ];
