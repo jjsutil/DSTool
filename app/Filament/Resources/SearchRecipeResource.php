@@ -8,8 +8,9 @@ use App\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\SearchRecipeResource\Pages;
 use App\Jobs\LaunchSearchRecipeJob as LaunchSearchRecipeLaravelJob;
 use App\Models\SearchRecipe;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -31,7 +32,7 @@ class SearchRecipeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
 
@@ -64,15 +65,15 @@ class SearchRecipeResource extends Resource
                     ->required(),
                 */
 
-                Forms\Components\TextInput::make('min_price')
+                TextInput::make('min_price')
                     ->required()
                     ->numeric(),
 
-                Forms\Components\TextInput::make('max_price')
+                TextInput::make('max_price')
                     ->required()
                     ->numeric(),
 
-                Forms\Components\TagsInput::make('keywords')
+                TagsInput::make('keywords')
                     ->label('Keywords (Tags)')
                     ->placeholder('Enter keywords')
                     ->separator(',')
@@ -84,9 +85,9 @@ class SearchRecipeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Recipe Name')->sortable(),
-                Tables\Columns\TextColumn::make('min_price')->label('Min Price')->sortable(),
-                Tables\Columns\TextColumn::make('max_price')->label('Max Price')->sortable(),
+                TextColumn::make('name')->label('Recipe Name')->sortable(),
+                TextColumn::make('min_price')->label('Min Price')->sortable(),
+                TextColumn::make('max_price')->label('Max Price')->sortable(),
                 TextColumn::make('keywords')
                     ->label('Keywords (Tags)')
                     ->formatStateUsing(fn ($state) => self::formatKeywordsAsTags($state))
@@ -95,7 +96,7 @@ class SearchRecipeResource extends Resource
             ->filters([
                 Tables\Filters\Filter::make('min_price')
                     ->form([
-                        Forms\Components\TextInput::make('min_price')
+                        TextInput::make('min_price')
                             ->numeric(),
                     ])
                     ->query(function ($query, array $data) {
@@ -104,7 +105,7 @@ class SearchRecipeResource extends Resource
 
                 Tables\Filters\Filter::make('max_price')
                     ->form([
-                        Forms\Components\TextInput::make('max_price')
+                        TextInput::make('max_price')
                             ->numeric(),
                     ])
                     ->query(function ($query, array $data) {
@@ -113,7 +114,7 @@ class SearchRecipeResource extends Resource
 
                 Tables\Filters\Filter::make('name')
                     ->form([
-                        Forms\Components\TextInput::make('name'),
+                        TextInput::make('name'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query->when($data['name'], fn ($q) => $q->where('name', 'like', '%' . $data['name'] . '%'));
