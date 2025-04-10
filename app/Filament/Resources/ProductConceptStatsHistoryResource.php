@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\ProductConceptStatsHistoryResource\Pages;
 use App\Models\ProductConceptStatsHistory;
 use Filament\Forms\Form;
@@ -60,6 +61,6 @@ class ProductConceptStatsHistoryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Products related';
+        return ResourceNavigationGroups::PRODUCTS->label();
     }
 }

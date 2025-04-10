@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\ReviewResource\Pages;
 use App\Models\Review;
 use Filament\Forms\Form;
@@ -60,6 +61,6 @@ class ReviewResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Buyers related';
+        return ResourceNavigationGroups::CUSTOMERS->label();
     }
 }
