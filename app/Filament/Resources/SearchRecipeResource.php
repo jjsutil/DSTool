@@ -34,7 +34,9 @@ class SearchRecipeResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->rules(['required', 'string', 'max:255']),
+
 
                 // TextInput for 'category' field (Currently commented due to enum endpoint not available)
                 /*
@@ -67,11 +69,13 @@ class SearchRecipeResource extends Resource
 
                 TextInput::make('min_price')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                ->rules(['required', 'numeric', 'min:0']),
 
                 TextInput::make('max_price')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->rules(['required', 'numeric', 'gte:min_price']),
 
                 TagsInput::make('keywords')
                     ->label('Keywords (Tags)')
