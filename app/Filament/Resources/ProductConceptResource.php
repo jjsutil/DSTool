@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\ResourceNavigationGroups;
+use App\Filament\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\ProductConceptResource\Pages;
 use App\Models\ProductConcept;
 use Filament\Forms\Form;

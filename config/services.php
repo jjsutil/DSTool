@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'python_api' => [
+        'search_recipe_crawler_url' => env('PYTHON_API_SEARCH_RECIPE_URL'),
+    ],
+
 ];

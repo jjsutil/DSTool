@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Enums\ResourceNavigationGroups;
+use App\Filament\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\SearchRecipeResource\Pages;
 use App\Jobs\LaunchSearchRecipeJob;
 use App\Models\SearchRecipe;
@@ -77,7 +77,7 @@ class SearchRecipeResource extends Resource
                 TextInput::make('max_price')
                     ->required()
                     ->numeric()
-                    ->rules(['required', 'numeric', 'gte:min_price']),
+                    ->rules(['required', 'numeric', 'min:0']),
 
                 TagsInput::make('keywords')
                     ->label('Keywords (Tags)')
