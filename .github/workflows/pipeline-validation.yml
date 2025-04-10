@@ -131,6 +131,8 @@ jobs:
           name: Laravel Tests
           fail_ci_if_error: false
 
-      - name: Warn if Codecov failed
+      - name: Handle Codecov Upload Result
         if: failure() && steps.codecov_upload.outcome == 'failure'
-        run: echo "::warning title=Codecov Failed::Coverage upload failed. Please check the Codecov logs for more details."
+        run: |
+          echo "::warning title=Codecov Failed::Coverage upload failed. Please check the Codecov logs for more details."
+          exit 0  # Ensures the step exits successfully without marking the pipeline as failed

@@ -880,6 +880,32 @@ flowchart TD
     G --> H[Async job queue triggers detailed scraping per URL]
 ```
 
+# Flow
+
+1. **Filament App (Frontend)**  
+   A user action is triggered from a Filament Resource (e.g., button click).
+
+2. **Laravel PHP API**  
+   - The resource dispatches a **Job** to handle background processing.
+   - The Job sends a **query configuration** to the Python API (e.g., keywords, categories, site target).
+
+3. **Python API (Crawling + Scraping Layer)**  
+   - Receives the query and **generates a list of product URLs**.
+   - For each URL:
+     - Performs **asynchronous scraping** from:
+       - AliExpress Frontend
+       - MercadoLibre Frontend
+     - Converts each product to a JSON-compatible object.
+     - **Validates** the product data.
+   - Sends the validated product data **back to the Laravel API**.
+
+4. **Laravel API (Domain Layer)**  
+   - Passes the received product object to the **Domain Layer**.
+   - Validates, parses, or maps the object into an **Eloquent model**.
+   - **Persists** the data into the database.
+
+![Editor _ Mermaid Chart-2025-04-09-155700](https://github.com/user-attachments/assets/864cb7ec-743d-4fdf-8a98-b94badf69c20)
+
 ---
 
 ### Models

@@ -6,6 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class Review
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property int $scraped_product_id
+ * @property int $user_id
+ * @property string $reviewer_name
+ * @property string $content
+ * @property array<string> $photo_path
+ * @property float $stars
+ * @property int $helpful_votes
+ */
+
 class Review extends Model
 {
     use HasFactory;
@@ -13,7 +27,7 @@ class Review extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',
@@ -29,7 +43,7 @@ class Review extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'id'         => 'integer',

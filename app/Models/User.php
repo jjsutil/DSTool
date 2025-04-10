@@ -32,7 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $keyType   = 'string';
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -43,7 +43,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -68,5 +68,8 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
-
+    //    public function isSuperAdmin(): bool
+    //    {
+    // return $this->role === 'super_admin' || $this->hasRole('super_admin');
+    //    }
 }

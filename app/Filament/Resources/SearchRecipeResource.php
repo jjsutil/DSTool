@@ -6,8 +6,9 @@ namespace App\Filament\Resources;
 
 use App\Enums\ResourceNavigationGroups;
 use App\Filament\Resources\SearchRecipeResource\Pages;
-use App\Jobs\LaunchSearchRecipeJob as LaunchSearchRecipeLaravelJob;
+use App\Jobs\LaunchSearchRecipeJob;
 use App\Models\SearchRecipe;
+use Exception;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -16,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 
 // TODO: Add backend validation (e.g., price bounds, required fields, array validation)
@@ -80,11 +82,14 @@ class SearchRecipeResource extends Resource
                 TagsInput::make('keywords')
                     ->label('Keywords (Tags)')
                     ->placeholder('Enter keywords')
-                    ->separator(',')
+                    ->separator()
                     ->nullable(),
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -98,7 +103,7 @@ class SearchRecipeResource extends Resource
                     ->html(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('min_price')
+                Filter::make('min_price')
                     ->form([
                         TextInput::make('min_price')
                             ->numeric(),
@@ -107,7 +112,7 @@ class SearchRecipeResource extends Resource
                         return $query->when($data['min_price'], fn ($q) => $q->where('min_price', '>=', $data['min_price']));
                     }),
 
-                Tables\Filters\Filter::make('max_price')
+                Filter::make('max_price')
                     ->form([
                         TextInput::make('max_price')
                             ->numeric(),
@@ -116,7 +121,7 @@ class SearchRecipeResource extends Resource
                         return $query->when($data['max_price'], fn ($q) => $q->where('max_price', '<=', $data['max_price']));
                     }),
 
-                Tables\Filters\Filter::make('name')
+                Filter::make('name')
                     ->form([
                         TextInput::make('name'),
                     ])
@@ -134,7 +139,7 @@ class SearchRecipeResource extends Resource
                     ->color('primary')
                     ->requiresConfirmation()
                     ->action(function (SearchRecipe $record): void {
-                        LaunchSearchRecipeLaravelJob::dispatch($record);
+                        LaunchSearchRecipeJob::dispatch($record);
                         Notification::make()
                             ->title(' 🔍Search launched!')
                             ->body('Products will begin appearing shortly.')
@@ -152,7 +157,7 @@ class SearchRecipeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // Add relations if needed
+            //
         ];
     }
 
