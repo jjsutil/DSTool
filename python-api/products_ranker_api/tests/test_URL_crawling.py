@@ -44,4 +44,4 @@ def test_invalid_price_range():
     except ValidationError:
         assert True
     else:
-        assert False
+        raise AssertionError("ValidationError was not raised when min_price > max_price")
