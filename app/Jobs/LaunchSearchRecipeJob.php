@@ -42,7 +42,13 @@ class LaunchSearchRecipeJob implements ShouldQueue
         try {
             $domainModel = SearchRecipeMapper::fromEloquentToDomain($this->searchRecipe);
             $payload     = SearchRecipeMapper::fromDomainToArray($domainModel);
-            $url         = config('services.python_api.product_ranker_url') . 'search-recipe/';
+
+            $baseUrl = config('services.python_api.product_ranker_url');
+
+            $this->handleBaseUrl($baseUrl);
+            $url = $baseUrl . 'search-recipe/';
+
+
 
             Log::info('trying to get from Payload...', $payload);
             $response = Http::get($url, $payload);
@@ -115,5 +121,15 @@ class LaunchSearchRecipeJob implements ShouldQueue
         Log::info('LaunchSearchRecipeJob dispatched.', [
             'id'   => $this->searchRecipe->id,
             'name' => $this->searchRecipe->name,]);
+    }
+
+    /**
+     * @throws ProductRankerException
+     */
+    private function handleBaseUrl(string $baseUrl): void
+    {
+        if (empty($baseUrl)) {
+            throw new ProductRankerException('Product ranker URL is not configured.');
+        }
     }
 }

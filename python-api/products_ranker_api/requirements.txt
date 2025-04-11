@@ -1,0 +1,25 @@
+# Core API Libraries
+fastapi==0.115.12
+uvicorn==0.34.0
+httpx==0.28.1
+
+# Testing Libraries
+pytest==8.3.5
+pytest-xdist==3.6.1
+pytest-asyncio==0.19.0
+
+# AWS Libraries
+boto3==1.36.23
+botocore==1.36.23
+s3transfer==0.11.2
+
+# Validation & Data Handling
+pydantic==2.10.6
+attrs==23.2.0
+
+# Database (optional, based on your use)
+sqlalchemy==2.0.9
+aiomysql==0.1.0   # Use if you're using MySQL asynchronously
+
+# Other potential libraries
+pytz==2025.1

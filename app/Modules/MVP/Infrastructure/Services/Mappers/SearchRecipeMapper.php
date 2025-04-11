@@ -12,7 +12,7 @@ class SearchRecipeMapper
     public static function fromEloquentToDomain(SearchRecipeFromEloquent $model): SearchRecipeFromDomain
     {
         return new SearchRecipeFromDomain(
-            id: $model->id,
+            uuid: $model->id,
             name: $model->name,
             keywords: $model->keywords,
             minPrice: (float) $model->min_price,
@@ -28,7 +28,7 @@ class SearchRecipeMapper
     {
         $model = new SearchRecipeFromEloquent();
 
-        $model->id        = $domain->id;
+        $model->id        = $domain->uuid;
         $model->name      = $domain->name;
         $model->keywords  = $domain->keywords;
         $model->min_price = $domain->minPrice;
@@ -45,7 +45,7 @@ class SearchRecipeMapper
     public static function fromDomainToArray(SearchRecipeFromDomain $domain): array
     {
         return [
-            'id'         => $domain->id,
+            'uuid'         => $domain->uuid,
             'name'       => $domain->name,
             'min_price'  => $domain->minPrice,
             'max_price'  => $domain->maxPrice,

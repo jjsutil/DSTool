@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 /**
  * Class SearchRecipe
  *
- * @property string $id
+ * @property string $uuid
  * @property string $name
  * @property string $keywords
  * @property float $minPrice
@@ -23,7 +23,7 @@ use Illuminate\Support\Carbon;
 class SearchRecipe
 {
     public function __construct(
-        public string  $id,
+        public string  $uuid,
         public string  $name,
         public string        $keywords,
         public float         $minPrice,
