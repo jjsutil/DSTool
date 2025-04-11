@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'python_api' => [
+        'product_ranker_url' => env('PYTHON_API_SEARCH_RECIPE_URL'),
+    ],
+
 ];

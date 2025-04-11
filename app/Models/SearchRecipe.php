@@ -14,11 +14,11 @@ use Illuminate\Support\Str;
  *
  * @property string $id
  * @property string $name
- * @property array $keywords
+ * @property string $keywords
  * @property float $min_price
  * @property float $max_price
- * @property string $sort_by
- * @property string $category
+ * @property string|null $sort_by
+ * @property string|null $category
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -41,7 +41,7 @@ class SearchRecipe extends Model
 
     protected $casts = [
         'id'        => 'string',
-        'keywords'  => 'array',
+        'keywords'  => 'string',
         'min_price' => 'decimal:2',
         'max_price' => 'decimal:2',
     ];
