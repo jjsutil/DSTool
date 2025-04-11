@@ -11,25 +11,25 @@ use Illuminate\Support\Carbon;
  *
  * @property string $id
  * @property string $name
- * @property array $keywords
- * @property float $min_price
- * @property float $max_price
- * @property string $sort_by
- * @property string $category
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property string $keywords
+ * @property float $minPrice
+ * @property float $maxPrice
+ * @property string|null $sortBy
+ * @property string|null $category
+ * @property Carbon|null $createdAt
+ * @property Carbon|null $updatedAt
  */
 
-readonly class SearchRecipe
+class SearchRecipe
 {
     public function __construct(
         public string  $id,
         public string  $name,
-        public array   $keywords,
-        public float   $minPrice,
-        public float   $maxPrice,
-        public string  $sortBy,
-        public string  $category,
+        public string        $keywords,
+        public float         $minPrice,
+        public float         $maxPrice,
+        public ?string  $sortBy,
+        public ?string  $category,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
     ) {

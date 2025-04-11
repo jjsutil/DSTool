@@ -17,7 +17,7 @@ return new class () extends Migration {
         Schema::create('search_recipes', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->json('keywords')->nullable();
+            $table->string('keywords')->nullable();
             $table->decimal('min_price', 10, 2)->nullable();
             $table->decimal('max_price', 10, 2)->nullable();
             $table->string('sort_by')->nullable();

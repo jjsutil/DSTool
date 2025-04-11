@@ -77,7 +77,7 @@ class SearchRecipeResource extends Resource
                 TextInput::make('max_price')
                     ->required()
                     ->numeric()
-                    ->rules(['required', 'numeric', 'min:0']),
+                    ->rules(['required', 'numeric', 'min:0']), // TODO fix somehow not working! , 'gte:min_price'
 
                 TagsInput::make('keywords')
                     ->label('Keywords (Tags)')

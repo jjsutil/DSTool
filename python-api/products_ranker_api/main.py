@@ -1,10 +1,8 @@
-
-from pydantic import BaseModel
-from typing import List, Optional
-
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
+
+from typing import List, Optional
 
 class SearchRecipe(BaseModel):
     id: str
@@ -12,8 +10,8 @@ class SearchRecipe(BaseModel):
     keywords: List[str]
     min_price: float
     max_price: float
-    sort_by: str
-    category: str
+    sort_by: Optional[str]
+    category: Optional[str]
 
     class Config:
         allow_population_by_field_name = True
@@ -23,16 +21,19 @@ class SearchRecipe(BaseModel):
 
 app = FastAPI()
 
-@app.get("/search-recipes")
+@app.get("/search-recipe/")
 async def search_recipes(
     id: str,
     name: str,
-    keywords: str,
     min_price: float,
     max_price: float,
-    sort_by: str,
-    category: str
+    keywords: str = Query(..., description="Comma-separated list of keywords"),
+    sort_by: Optional[str] = Query(None, description="Query results sorted by"),
+    category: Optional[str] = Query(None, description="Category of the products")
 ):
+    if min_price > max_price:
+        raise HTTPException(status_code=400, detail="min_price cannot be greater than max_price")
+
     try:
         search_recipe = SearchRecipe(
             id=id,
@@ -49,15 +50,10 @@ async def search_recipes(
     response = {
         "status": "success",
         "message": "Search recipe parameters successfully processed.",
-        "data": {
-            "id": search_recipe.id,
-            "name": search_recipe.name,
-            "keywords": search_recipe.keywords,
-            "min_price": search_recipe.min_price,
-            "max_price": search_recipe.max_price,
-            "sort_by": search_recipe.sort_by,
-            "category": search_recipe.category,
-        }
+        "data": search_recipe.dict()
     }
 
+# methods to crawl URLs (Official APIs hopefully!) from both sources using google lens
+# methods to complete product objects
+# methods to rank
     return JSONResponse(content=response)

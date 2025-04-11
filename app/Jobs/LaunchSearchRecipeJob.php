@@ -42,12 +42,19 @@ class LaunchSearchRecipeJob implements ShouldQueue
         try {
             $domainModel = SearchRecipeMapper::fromEloquentToDomain($this->searchRecipe);
             $payload     = SearchRecipeMapper::fromDomainToArray($domainModel);
-            $url         = config('services.python_api.product_ranker_search_recipe_url');
-            $response    = Http::get($url, $payload);
-            Log::info('GET query result from url' .  $url);
+            $url         = config('services.python_api.product_ranker_url') . 'search-recipe/';
 
+            Log::info('trying to get from Payload...', $payload);
+            $response = Http::get($url, $payload);
+
+            Log::info('GET query result from url ' .  $url . ' with response ' . $response);
+
+            // TODO connect response with mappers -> eloquent -> database
+            //            $this->handleResponseCases($response);
             $this->handleFailedResponse($response);
             $this->logSuccessfulRecipeSent($response);
+            //            $this->parseResponseToEloquent(&$response); Mappers?
+            //            LaunchRankedProductsUpsertJob::dispatch($response);
 
         } catch (ProductRankerException $e) {
             $this->logRankerException($e);
@@ -72,7 +79,9 @@ class LaunchSearchRecipeJob implements ShouldQueue
 
     private function handleInvalidRecipe(): void
     {
+        Log::info('recipe', [$this->searchRecipe]);
         if (!$this->searchRecipe || !$this->searchRecipe->id) {
+            Log::info('failed!');
             throw new InvalidFormatException('Invalid SearchRecipe provided.');
         }
     }

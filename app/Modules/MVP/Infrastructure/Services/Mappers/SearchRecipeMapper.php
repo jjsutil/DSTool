@@ -15,8 +15,8 @@ class SearchRecipeMapper
             id: $model->id,
             name: $model->name,
             keywords: $model->keywords,
-            minPrice: $model->min_price,
-            maxPrice: $model->max_price,
+            minPrice: (float) $model->min_price,
+            maxPrice: (float) $model->max_price,
             sortBy: $model->sort_by,
             category: $model->category,
             createdAt: $model->created_at,
@@ -47,13 +47,13 @@ class SearchRecipeMapper
         return [
             'id'         => $domain->id,
             'name'       => $domain->name,
-            'keywords'   => $domain->keywords,
             'min_price'  => $domain->minPrice,
             'max_price'  => $domain->maxPrice,
+            'keywords'   => $domain->keywords,
             'sort_by'    => $domain->sortBy,
             'category'   => $domain->category,
-            'created_at' => optional($domain->createdAt),
-            'updated_at' => optional($domain->updatedAt),
+            'created_at' => $domain->createdAt,
+            'updated_at' => $domain->updatedAt,
         ];
     }
 
