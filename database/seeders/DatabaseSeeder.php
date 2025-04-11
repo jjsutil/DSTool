@@ -17,9 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        if (!app()->environment('local')) {
+            return;
+        }
 
         if (app()->environment('local')) {
+
+            User::factory(10)->create();
+
             DB::table('users')->insert([
                 'id'       => Str::uuid(),
                 'name'     => 'Admin',
@@ -32,6 +37,18 @@ class DatabaseSeeder extends Seeder
                 'name'     => 'Valentina Hennings',
                 'email'    => 'vale_hennings@hotmail.com',
                 'password' => Hash::make('friends<3'),
+            ]);
+
+            DB::table('search_recipes')->insert([
+                'id' => Str::uuid(),
+                'name' => 'Nicho de prueba',
+                'keywords' => 'producto 1,producto 2, producto 3',
+                'min_price' => 10.00,
+                'max_price' => 100.00,
+                'sort_by' => 'relevance',
+                'category' => 'test',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
         }

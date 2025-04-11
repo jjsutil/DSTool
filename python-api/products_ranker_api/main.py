@@ -4,8 +4,9 @@ from pydantic import BaseModel, ValidationError
 
 from typing import List, Optional
 
+
 class SearchRecipe(BaseModel):
-    id: str
+    uuid: str
     name: str
     keywords: List[str]
     min_price: float
@@ -19,11 +20,13 @@ class SearchRecipe(BaseModel):
             set: list
         }
 
+
 app = FastAPI()
+
 
 @app.get("/search-recipe/")
 async def search_recipes(
-    id: str,
+    uuid: str,
     name: str,
     min_price: float,
     max_price: float,
@@ -36,7 +39,7 @@ async def search_recipes(
 
     try:
         search_recipe = SearchRecipe(
-            id=id,
+            uuid=uuid,
             name=name,
             keywords=keywords.split(','),
             min_price=min_price,
@@ -50,10 +53,10 @@ async def search_recipes(
     response = {
         "status": "success",
         "message": "Search recipe parameters successfully processed.",
-        "data": search_recipe.dict()
+        "data": search_recipe.model_dump()
     }
 
-# methods to crawl URLs (Official APIs hopefully!) from both sources using google lens
-# methods to complete product objects
-# methods to rank
+    # methods to crawl URLs (Official APIs hopefully!) from both sources using google lens
+    # methods to complete product objects
+    # methods to rank
     return JSONResponse(content=response)

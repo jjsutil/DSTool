@@ -135,4 +135,29 @@ jobs:
         if: failure() && steps.codecov_upload.outcome == 'failure'
         run: |
           echo "::warning title=Codecov Failed::Coverage upload failed. Please check the Codecov logs for more details."
-          exit 0  # Ensures the step exits successfully without marking the pipeline as failed
+          exit 0
+
+  python-api-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python-api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r products_ranker_api/requirements.txt
+          pip install pytest pytest-xdist
+
+      - name: Run Python Tests in Parallel
+        run: |
+          PYTHONPATH=. pytest -n auto products_ranker_api
