@@ -4,6 +4,8 @@ from pydantic import BaseModel, ValidationError
 
 from typing import List, Optional
 
+from products_ranker_api.spiders.aliexpress_htmx import query_aliexpress
+
 
 class SearchRecipe(BaseModel):
     uuid: str
@@ -50,13 +52,16 @@ async def search_recipes(
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"Invalid input: {e}")
 
-    response = {
-        "status": "success",
-        "message": "Search recipe parameters successfully processed.",
-        "data": search_recipe.model_dump()
-    }
+    try:
+        search_results = await query_aliexpress(search_recipe)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AliExpress query failed: {str(e)}")
 
+    return JSONResponse(content={
+        "status": "success",
+        "message": "Search recipe successfully executed.",
+        "data": search_results.model_dump()
+    })
     # methods to crawl URLs (Official APIs hopefully!) from both sources using google lens
     # methods to complete product objects
     # methods to rank
-    return JSONResponse(content=response)
