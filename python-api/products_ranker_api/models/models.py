@@ -1,15 +1,26 @@
 # models.py
 
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class Product(BaseModel):
-    title: str
+    provider_id: Optional[str]
+    name: str
+    category_id: Optional[str]
+    sales_quantity: Optional[int]
     price: float
-    url: str
-    image: str
-
+    currency: str = "USD"
+    review_conclusion: Optional[str]
+    stars: Optional[float]
+    photo_path: List[str]
+    reviews_count: int
+    stock_quantity: Optional[int]
+    shipping_date: Optional[str]
+    shipping_cost: float
+    shipping_currency: str = "USD"
+    created_at: str
+    updated_at: str
 
 class SearchRecipe(BaseModel):
     uuid: str

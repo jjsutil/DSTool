@@ -4,7 +4,7 @@ from pydantic import BaseModel, ValidationError
 
 from typing import List, Optional
 
-from products_ranker_api.spiders.aliexpress_htmx import query_aliexpress
+from products_ranker_api.spiders.aliexpress_httpx import query_aliexpress
 
 
 class SearchRecipe(BaseModel):
