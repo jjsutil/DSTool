@@ -5,18 +5,18 @@ from typing import List, Optional
 
 
 class Product(BaseModel):
-    provider_id: Optional[str]
+    provider_id: Optional[str] = None
     name: str
-    category_id: Optional[str]
-    sales_quantity: Optional[int]
+    category_id: Optional[str] = None
+    sales_quantity: Optional[int] = None
     price: float
     currency: str = "USD"
-    review_conclusion: Optional[str]
-    stars: Optional[float]
+    review_conclusion: Optional[str] = None
+    stars: Optional[float] = None
     photo_path: List[str]
     reviews_count: int
-    stock_quantity: Optional[int]
-    shipping_date: Optional[str]
+    stock_quantity: Optional[int] = None
+    shipping_date: Optional[str] = None
     shipping_cost: float
     shipping_currency: str = "USD"
     created_at: str
