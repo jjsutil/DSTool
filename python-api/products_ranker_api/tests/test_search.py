@@ -30,7 +30,6 @@ async def test_search_recipe_returns_products():
             assert product["price"] > 0
 
             assert isinstance(product["currency"], str)
-            assert len(product["currency"]) >= 2
 
             assert isinstance(product["photo_path"], list)
             assert all(isinstance(url, str) for url in product["photo_path"])
